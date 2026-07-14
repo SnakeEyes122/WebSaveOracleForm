@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ofr-backend
+    ports:
+      - "5000:5000"
+    environment:
+      # Inject necessary environment variables for production/docker
+      - PORT=5000
+    # Use env_file to safely load Supabase credentials 
+    # (Ensure you copy .env to the root or backend folder before running)
+    env_file:
+      - ./backend/.env
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ofr-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
