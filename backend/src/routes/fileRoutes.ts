@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { uploadFiles, getFiles, getFileVersions, downloadFile } from '../controllers/fileController';
+import { uploadFiles, getFiles, getFileVersions, downloadFile, updateFile, deleteFile } from '../controllers/fileController';
 import { authenticate, requireRole } from '../middlewares/authMiddleware';
 
 const router = Router();
@@ -18,5 +18,9 @@ router.post('/upload', requireRole(['Admin', 'Developer']), upload.array('files'
 router.get('/', getFiles);
 router.get('/:id/versions', getFileVersions);
 router.get('/download/:id', downloadFile);
+
+// Admin only operations on files
+router.put('/:id', requireRole(['Admin']), updateFile);
+router.delete('/:id', requireRole(['Admin']), deleteFile);
 
 export default router;

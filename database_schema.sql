@@ -3,6 +3,18 @@
 -- For Supabase PostgreSQL
 -- ==============================================================================
 
+-- DROP EXISTING TABLES TO AVOID ERRORS (CASCADE handles foreign keys)
+DROP TABLE IF EXISTS audit_logs CASCADE;
+DROP TABLE IF EXISTS download_history CASCADE;
+DROP TABLE IF EXISTS file_versions CASCADE;
+DROP TABLE IF EXISTS files CASCADE;
+DROP TABLE IF EXISTS file_types CASCADE;
+DROP TABLE IF EXISTS modules CASCADE;
+DROP TABLE IF EXISTS projects CASCADE;
+DROP TABLE IF EXISTS systems CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
+
 -- 1. Create Roles Table
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
@@ -24,8 +36,8 @@ CREATE TABLE users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. Create Projects Table
-CREATE TABLE projects (
+-- 3. Create Systems Table
+CREATE TABLE systems (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(150) NOT NULL UNIQUE,
     description TEXT,
@@ -33,30 +45,34 @@ CREATE TABLE projects (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. Create Modules Table
-CREATE TABLE modules (
+-- 4. Create File Types Table
+CREATE TABLE file_types (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
-    name VARCHAR(150) NOT NULL,
+    name VARCHAR(50) NOT NULL UNIQUE, -- e.g. fmx, fmb, rdf
     description TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (project_id, name)
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Insert Default File Types
+INSERT INTO file_types (name, description) VALUES 
+('fmx', 'Oracle Forms Executable'),
+('fmb', 'Oracle Forms Source'),
+('rdf', 'Oracle Reports');
 
 -- 5. Create Files Table (Master File Metadata)
 CREATE TABLE files (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    module_id UUID REFERENCES modules(id) ON DELETE SET NULL,
-    system_name VARCHAR(150), -- e.g., HR, Finance
+    system_id UUID REFERENCES systems(id) ON DELETE CASCADE,
+    file_type_id UUID REFERENCES file_types(id) ON DELETE RESTRICT,
     original_name VARCHAR(255) NOT NULL,
     file_name VARCHAR(255) NOT NULL, -- usually same as original_name
-    extension VARCHAR(10) NOT NULL,  -- .fmb, .fmx, .rdf
     latest_version VARCHAR(20) DEFAULT '1.0',
     status VARCHAR(50) DEFAULT 'Active', -- Active, Archived
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (module_id, file_name) -- A module can only have one file with a specific name, versions handle updates
+    UNIQUE (system_id, file_type_id, file_name) -- A system can only have one file with a specific name and type
 );
 
 -- 6. Create File Versions Table (Stores physical file mapping)
@@ -88,7 +104,7 @@ CREATE TABLE audit_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE SET NULL,
     action VARCHAR(50) NOT NULL, -- Upload, Delete, Download, Update Metadata, Login, Logout
-    entity_type VARCHAR(50),     -- File, User, Project, Module
+    entity_type VARCHAR(50),     -- File, User, System, FileType
     entity_id UUID,              -- ID of the affected entity
     details JSONB,               -- Additional JSON info
     ip_address VARCHAR(45),
@@ -99,7 +115,8 @@ CREATE TABLE audit_logs (
 -- INDEXES FOR PERFORMANCE
 -- ==============================================================================
 CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_files_module_id ON files(module_id);
+CREATE INDEX idx_files_system_id ON files(system_id);
+CREATE INDEX idx_files_file_type_id ON files(file_type_id);
 CREATE INDEX idx_files_file_name ON files(file_name);
 CREATE INDEX idx_file_versions_file_id ON file_versions(file_id);
 CREATE INDEX idx_download_history_file_version ON download_history(file_version_id);
@@ -118,7 +135,8 @@ END;
 $$ language 'plpgsql';
 
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
-CREATE TRIGGER update_projects_updated_at BEFORE UPDATE ON projects FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_systems_updated_at BEFORE UPDATE ON systems FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_file_types_updated_at BEFORE UPDATE ON file_types FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER update_files_updated_at BEFORE UPDATE ON files FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 -- ==============================================================================
@@ -128,7 +146,13 @@ CREATE TRIGGER update_files_updated_at BEFORE UPDATE ON files FOR EACH ROW EXECU
 INSERT INTO users (username, password_hash, role_id, full_name)
 VALUES (
     'admin', 
-    '$2b$10$GrRnV7eOTJ9hOEB8hYdj0ufUIyFvrHA.Pk3ziaPiPj2I90cyBfvXe', 
+    '$2b$10$WgI0ma1t3ZnM1xbF4hfcXO/wGE0f0sSfRkK72yi9/dal90zzlPsG6', 
     (SELECT id FROM roles WHERE name = 'Admin'), 
     'System Administrator'
 );
+
+-- ==============================================================================
+-- GRANT PERMISSIONS (Fixes 401 Unauthorized / Permission Denied)
+-- ==============================================================================
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;

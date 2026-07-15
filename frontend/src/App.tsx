@@ -6,8 +6,8 @@ import DashboardLayout from './layouts/DashboardLayout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Repository from './pages/Repository';
-import Projects from './pages/Projects';
-import Modules from './pages/Modules';
+import Systems from './pages/Systems';
+import FileTypes from './pages/FileTypes';
 import AuditLogs from './pages/AuditLogs';
 import Users from './pages/Users';
 
@@ -27,8 +27,8 @@ function App() {
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="repository" element={<Repository />} />
-              <Route path="projects" element={<Projects />} />
-              <Route path="modules" element={<Modules />} />
+              <Route path="systems" element={<Systems />} />
+              <Route path="file-types" element={<FileTypes />} />
               <Route path="users" element={<Users />} />
               <Route path="audit-logs" element={<AuditLogs />} />
             </Route>

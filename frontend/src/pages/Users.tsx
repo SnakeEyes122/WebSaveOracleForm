@@ -1,6 +1,219 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import Modal from '../components/Modal';
-type Role={id:number;name:string}; type User={id:string;username:string;full_name:string|null;is_active:boolean;created_at:string;roles?:Role|Role[]};
-export default function Users(){const qc=useQueryClient(),[edit,setEdit]=useState<User|null>(null),[username,setUsername]=useState(''),[fullName,setFullName]=useState(''),[password,setPassword]=useState(''),[roleId,setRoleId]=useState(''),[active,setActive]=useState(true),[error,setError]=useState('');const {data:users=[],isLoading}=useQuery<User[]>({queryKey:['users'],queryFn:()=>api.get('/users').then(r=>r.data)});const {data:roles=[]}=useQuery<Role[]>({queryKey:['roles'],queryFn:()=>api.get('/users/roles').then(r=>r.data)});const close=()=>{setEdit(null);setUsername('');setFullName('');setPassword('');setRoleId('');setActive(true);setError('')};const openEdit=(u:User)=>{const r=Array.isArray(u.roles)?u.roles[0]:u.roles;setEdit(u);setUsername(u.username);setFullName(u.full_name||'');setPassword('');setRoleId(String(r?.id||''));setActive(u.is_active)};const save=async()=>{try{if(!fullName||!roleId||(!edit?.id&&(!username||!password))){setError('Please complete all required fields.');return}if(edit?.id)await api.put(`/users/${edit.id}`,{full_name:fullName,role_id:Number(roleId),is_active:active,...(password?{password}:{})});else await api.post('/users',{username,password,full_name:fullName,role_id:Number(roleId)});qc.invalidateQueries({queryKey:['users']});close()}catch(e:any){setError(e.response?.data?.error||'Unable to save user.')}};const del=async(id:string)=>{if(confirm('Delete this user?')){await api.delete(`/users/${id}`);qc.invalidateQueries({queryKey:['users']})}};return <div className="space-y-6"><div className="flex justify-between"><h2 className="text-2xl font-bold">User Management</h2><button className="rounded bg-blue-600 px-4 py-2 text-white" onClick={()=>setEdit({id:'',username:'',full_name:'',is_active:true,created_at:''})}>Add User</button></div><table className="w-full bg-white"><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>{isLoading?<tr><td>Loading…</td></tr>:users.map(u=>{const r=Array.isArray(u.roles)?u.roles[0]:u.roles;return <tr key={u.id}><td>{u.username}</td><td>{u.full_name||'-'}</td><td>{r?.name||'-'}</td><td>{u.is_active?'Active':'Inactive'}</td><td><button onClick={()=>openEdit(u)}>Edit</button><button className="ml-3 text-red-600" onClick={()=>del(u.id)}>Delete</button></td></tr>})}</tbody></table><Modal open={!!edit} title={edit?.id?'Edit User':'Add User'} onClose={close}>{error&&<p className="text-red-600">{error}</p>}{!edit?.id&&<input className="mb-3 w-full border p-2" placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)}/>}<input className="mb-3 w-full border p-2" placeholder="Full name" value={fullName} onChange={e=>setFullName(e.target.value)}/><select className="mb-3 w-full border p-2" value={roleId} onChange={e=>setRoleId(e.target.value)}><option value="">Select role</option>{roles.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select><input className="mb-3 w-full border p-2" type="password" placeholder={edit?.id?'New password (optional)':'Password'} value={password} onChange={e=>setPassword(e.target.value)}/>{edit?.id&&<label><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/> Active</label>}<button className="mt-3 rounded bg-blue-600 px-4 py-2 text-white" onClick={save}>Save</button></Modal></div>}
+
+type Role = { id: number; name: string };
+type User = { id: string; username: string; full_name: string | null; is_active: boolean; created_at: string; roles?: Role | Role[] };
+
+export default function Users() {
+  const qc = useQueryClient();
+  const [edit, setEdit] = useState<User | null>(null);
+  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [password, setPassword] = useState('');
+  const [roleId, setRoleId] = useState('');
+  const [active, setActive] = useState(true);
+  const [error, setError] = useState('');
+
+  const { data: users = [], isLoading } = useQuery<User[]>({ queryKey: ['users'], queryFn: () => api.get('/users').then(r => r.data) });
+  const { data: roles = [] } = useQuery<Role[]>({ queryKey: ['roles'], queryFn: () => api.get('/users/roles').then(r => r.data) });
+
+  const close = () => {
+    setEdit(null);
+    setUsername('');
+    setFullName('');
+    setPassword('');
+    setRoleId('');
+    setActive(true);
+    setError('');
+  };
+
+  const openEdit = (u: User) => {
+    const r = Array.isArray(u.roles) ? u.roles[0] : u.roles;
+    setEdit(u);
+    setUsername(u.username);
+    setFullName(u.full_name || '');
+    setPassword('');
+    setRoleId(String(r?.id || ''));
+    setActive(u.is_active);
+  };
+
+  const save = async () => {
+    try {
+      if (!fullName || !roleId || (!edit?.id && (!username || !password))) {
+        setError('Please complete all required fields.');
+        return;
+      }
+      if (edit?.id) {
+        await api.put(`/users/${edit.id}`, { full_name: fullName, role_id: Number(roleId), is_active: active, ...(password ? { password } : {}) });
+      } else {
+        await api.post('/users', { username, password, full_name: fullName, role_id: Number(roleId) });
+      }
+      qc.invalidateQueries({ queryKey: ['users'] });
+      close();
+    } catch (e: any) {
+      setError(e.response?.data?.error || 'Unable to save user.');
+    }
+  };
+
+  const del = async (id: string) => {
+    if (confirm('Delete this user?')) {
+      await api.delete(`/users/${id}`);
+      qc.invalidateQueries({ queryKey: ['users'] });
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto py-8 px-8">
+      <div className="border-b border-gray-200 dark:border-gray-800 pb-4 mb-8 flex justify-between items-end">
+        <div>
+          <h2 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-white">User Management</h2>
+          <p className="text-sm text-gray-500 font-mono mt-1">Manage users and roles in the repository</p>
+        </div>
+        <button 
+          onClick={() => setEdit({ id: '', username: '', full_name: '', is_active: true, created_at: '' })}
+          className="flex items-center gap-2 bg-gray-900 hover:bg-black text-white dark:bg-gray-100 dark:hover:bg-white dark:text-gray-900 px-4 py-2 rounded-none transition-colors text-sm font-medium"
+        >
+          <Plus className="h-4 w-4" />
+          Add User
+        </button>
+      </div>
+
+      <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20">
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Username</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Name</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Role</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Status</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-sm font-mono text-gray-500">Loading users...</td>
+                </tr>
+              ) : (
+                users.map(u => {
+                  const r = Array.isArray(u.roles) ? u.roles[0] : u.roles;
+                  return (
+                    <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors group">
+                      <td className="px-6 py-4">
+                        <p className="font-mono text-sm text-gray-900 dark:text-gray-100">{u.username}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-medium text-gray-900 dark:text-gray-300">{u.full_name || '-'}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="font-mono text-xs text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-700 px-2 py-0.5 uppercase">
+                          {r?.name || '-'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`font-mono text-xs px-2 py-0.5 border uppercase ${u.is_active ? 'border-green-300 text-green-700 dark:border-green-800 dark:text-green-400' : 'border-gray-300 text-gray-500'}`}>
+                          {u.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button onClick={() => openEdit(u)} className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white transition-colors" title="Edit">
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button onClick={() => del(u.id)} className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors" title="Delete">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <Modal open={!!edit} title={edit?.id ? 'Edit User' : 'Add User'} onClose={close}>
+        <div className="space-y-6 mt-4">
+          {error && (
+            <div className="p-3 border border-red-200 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400 text-sm font-mono">
+              {error}
+            </div>
+          )}
+          
+          {!edit?.id && (
+            <div>
+              <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">Username *</label>
+              <input 
+                className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono transition-colors" 
+                placeholder="Username" 
+                value={username} 
+                onChange={e => setUsername(e.target.value)} 
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">Full Name *</label>
+            <input 
+              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 transition-colors" 
+              placeholder="Full name" 
+              value={fullName} 
+              onChange={e => setFullName(e.target.value)} 
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">Role *</label>
+            <select 
+              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono transition-colors" 
+              value={roleId} 
+              onChange={e => setRoleId(e.target.value)}
+            >
+              <option value="">Select role</option>
+              {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">{edit?.id ? 'New Password (Optional)' : 'Password *'}</label>
+            <input 
+              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono transition-colors" 
+              type="password" 
+              placeholder={edit?.id ? 'Leave blank to keep unchanged' : 'Password'} 
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+            />
+          </div>
+
+          {edit?.id && (
+            <div className="flex items-center gap-3">
+              <input 
+                type="checkbox" 
+                id="user-active"
+                className="w-4 h-4 rounded-none border-gray-300 text-gray-900 focus:ring-gray-900 dark:border-gray-700 dark:bg-[#0a0a0a] dark:checked:bg-white"
+                checked={active} 
+                onChange={e => setActive(e.target.checked)} 
+              />
+              <label htmlFor="user-active" className="text-sm text-gray-700 dark:text-gray-300 font-medium">Active Account</label>
+            </div>
+          )}
+          
+          <div className="pt-6 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-800 -mx-6 px-6 pb-2">
+            <button onClick={close} className="px-6 py-2 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-none transition-colors">
+              Cancel
+            </button>
+            <button onClick={save} className="px-6 py-2 bg-gray-900 hover:bg-black dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 text-sm font-medium rounded-none transition-colors">
+              Save
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}

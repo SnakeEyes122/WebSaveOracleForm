@@ -6,33 +6,62 @@ import { createAuditLog } from '../services/auditService';
 export const uploadFiles = async (req: Request, res: Response) => {
   try {
     const files = req.files as Express.Multer.File[];
-    const { module_id, system_name, remark } = req.body;
+    const { system_id, remark } = req.body;
 
     if (!files || files.length === 0) {
       return res.status(400).json({ error: 'No files uploaded' });
     }
 
-    if (!module_id) {
-      return res.status(400).json({ error: 'module_id is required' });
+    if (!system_id) {
+      return res.status(400).json({ error: 'system_id is required' });
     }
 
     const uploadedFilesData = [];
 
+    // Fetch system data for storage path
+    const { data: systemData, error: systemError } = await supabase
+      .from('systems')
+      .select('name')
+      .eq('id', system_id)
+      .single();
+      
+    if (systemError || !systemData) {
+      return res.status(400).json({ error: 'Invalid system_id' });
+    }
+    
+    // Sanitize names for folder paths (replace slashes with dash, spaces with underscore)
+    const sanitizeName = (name: string) => name.replace(/[\/\\]/g, '-').replace(/\s+/g, '_');
+    const systemName = sanitizeName(systemData.name);
+
+    // Get allowed file types mapping
+    const { data: fileTypesData, error: fileTypesError } = await supabase
+      .from('file_types')
+      .select('id, name');
+      
+    if (fileTypesError || !fileTypesData) {
+      return res.status(500).json({ error: 'Failed to fetch file types' });
+    }
+    const fileTypesMap = new Map(fileTypesData.map(ft => [ft.name.toLowerCase(), ft.id]));
+
     for (const file of files) {
       const original_name = file.originalname;
-      const file_name = original_name; // We keep them same for now
-      const extension = original_name.substring(original_name.lastIndexOf('.')).toLowerCase();
-      
-      // Validate extension
-      if (!['.fmb', '.fmx', '.rdf'].includes(extension)) {
-        throw new Error(`Invalid file extension: ${extension}. Only .fmb, .fmx, .rdf are allowed.`);
-      }
+      const file_name = original_name.replace(/\s+/g, '_'); // Replace spaces with underscore
+      let extension = original_name.substring(original_name.lastIndexOf('.')).toLowerCase();
+      const extName = extension.replace('.', '');
 
-      // Check if file already exists in this module
+      // Validate extension dynamically against file_types
+      if (!fileTypesMap.has(extName)) {
+        throw new Error(`Invalid file extension: ${extension}. Type not allowed in system.`);
+      }
+      
+      const file_type_id = fileTypesMap.get(extName);
+
+      // Check if file already exists in this system and type
       const { data: existingFile } = await supabase
         .from('files')
         .select('*')
-        .eq('module_id', module_id)
+        .eq('system_id', system_id)
+        .eq('file_type_id', file_type_id)
         .eq('file_name', file_name)
         .single();
 
@@ -54,11 +83,10 @@ export const uploadFiles = async (req: Request, res: Response) => {
         const { data: newFile, error: newFileError } = await supabase
           .from('files')
           .insert([{ 
-            module_id, 
-            system_name, 
+            system_id, 
+            file_type_id,
             original_name, 
             file_name, 
-            extension, 
             latest_version: newVersionNumber,
             created_by: req.user?.id
           }])
@@ -73,7 +101,9 @@ export const uploadFiles = async (req: Request, res: Response) => {
       const checksum_sha256 = crypto.createHash('sha256').update(file.buffer).digest('hex');
 
       // Upload to Supabase Storage
-      const storagePath = `${module_id}/${fileId}/${newVersionNumber}_${file_name}`;
+      const fileTypeDir = extName; 
+      const storagePath = `${systemName}/${fileTypeDir}/${newVersionNumber}_${file_name}`;
+      
       const { data: storageData, error: storageError } = await supabase.storage
         .from('oracle-forms-repo')
         .upload(storagePath, file.buffer, {
@@ -82,7 +112,6 @@ export const uploadFiles = async (req: Request, res: Response) => {
         });
 
       if (storageError) {
-         // Rollback logic could be added here
          throw storageError;
       }
 
@@ -119,16 +148,17 @@ export const uploadFiles = async (req: Request, res: Response) => {
 
 export const getFiles = async (req: Request, res: Response) => {
   try {
-    const { module_id, search, extension, status } = req.query;
+    const { system_id, file_type_id, search, status } = req.query;
     
     let query = supabase.from('files').select(`
       *,
-      modules (name, projects (name)),
+      systems (name),
+      file_types (name),
       created_by_user:users!files_created_by_fkey (full_name)
     `).order('updated_at', { ascending: false });
 
-    if (module_id) query = query.eq('module_id', module_id);
-    if (extension) query = query.eq('extension', extension);
+    if (system_id) query = query.eq('system_id', system_id);
+    if (file_type_id) query = query.eq('file_type_id', file_type_id);
     if (status) query = query.eq('status', status);
     if (search) {
       query = query.ilike('file_name', `%${search}%`);
@@ -187,13 +217,61 @@ export const downloadFile = async (req: Request, res: Response) => {
         ip_address: req.ip
       }]);
       
-      await createAuditLog({ userId: req.user.id, action: 'Download File', entityType: 'File Version', entityId: id as string, details: { fileName: version.files.file_name, version: version.version_number } });
+      const fileDataRecord = version.files as any;
+      await createAuditLog({ userId: req.user.id, action: 'Download File', entityType: 'File Version', entityId: id as string, details: { fileName: fileDataRecord.file_name, version: version.version_number } });
     }
 
     const buffer = await fileData.arrayBuffer();
     res.setHeader('Content-Type', 'application/octet-stream');
-    res.setHeader('Content-Disposition', `attachment; filename="${version.files.file_name}"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${(version.files as any).file_name}"`);
     res.send(Buffer.from(buffer));
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Admin only operations
+export const updateFile = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body; // usually just status updates like Archived
+
+    const { data, error } = await supabase
+      .from('files')
+      .update({ status })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+export const deleteFile = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    
+    // Deleting the master file record will cascade delete file_versions.
+    // However, it won't delete the physical files from Supabase Storage automatically.
+    // In a production app, we should delete the physical files too.
+    const { data: versions } = await supabase.from('file_versions').select('storage_path, bucket_name').eq('file_id', id);
+    
+    if (versions && versions.length > 0) {
+        for (const version of versions) {
+            await supabase.storage.from(version.bucket_name).remove([version.storage_path]);
+        }
+    }
+
+    const { error } = await supabase
+      .from('files')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    res.status(204).send();
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
