@@ -9,9 +9,9 @@ import Repository from './pages/Repository';
 import Projects from './pages/Projects';
 import Modules from './pages/Modules';
 import AuditLogs from './pages/AuditLogs';
+import Users from './pages/Users';
 
 // Placeholder components for routes
-const Users = () => <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow">User Management coming soon...</div>;
 
 const queryClient = new QueryClient();
 
