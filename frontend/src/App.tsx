@@ -6,12 +6,12 @@ import DashboardLayout from './layouts/DashboardLayout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Repository from './pages/Repository';
+import Projects from './pages/Projects';
+import Modules from './pages/Modules';
+import AuditLogs from './pages/AuditLogs';
 
 // Placeholder components for routes
-const Projects = () => <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow">Projects Management coming soon...</div>;
-const Modules = () => <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow">Modules Management coming soon...</div>;
 const Users = () => <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow">User Management coming soon...</div>;
-const AuditLogs = () => <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow">Audit Logs coming soon...</div>;
 
 const queryClient = new QueryClient();
 

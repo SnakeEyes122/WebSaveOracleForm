@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Search, Upload, Download, History, MoreVertical, FileCode, Filter } from 'lucide-react';
 import api from '../api/axios';
+import VersionHistoryModal from './VersionHistoryModal';
 
 interface FileData {
   id: string;
@@ -18,11 +19,16 @@ const Repository: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [moduleId, setModuleId] = useState('');
+  const [extension, setExtension] = useState('');
+  const [status, setStatus] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [historyFile, setHistoryFile] = useState<FileData | null>(null);
 
   const { data: files, isLoading } = useQuery<FileData[]>({
-    queryKey: ['files', searchTerm],
+    queryKey: ['files', searchTerm, moduleId, extension, status],
     queryFn: async () => {
-      const response = await api.get('/files', { params: { search: searchTerm } });
+      const response = await api.get('/files', { params: { search: searchTerm || undefined, module_id: moduleId || undefined, extension: extension || undefined, status: status || undefined } });
       return response.data;
     },
   });
@@ -122,7 +128,7 @@ const Repository: React.FC = () => {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
             />
           </div>
-          <button className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+          <button onClick={() => setFiltersOpen(!filtersOpen)} className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
             <Filter className="h-5 w-5" />
           </button>
           <button 
@@ -134,6 +140,7 @@ const Repository: React.FC = () => {
           </button>
         </div>
       </div>
+      {filtersOpen && <div className="flex gap-3 rounded-lg bg-white p-4 shadow"><select value={moduleId} onChange={e=>setModuleId(e.target.value)}><option value="">All modules</option>{modules?.map(m=><option key={m.id} value={m.id}>{m.name}</option>)}</select><select value={extension} onChange={e=>setExtension(e.target.value)}><option value="">All types</option><option>.fmb</option><option>.fmx</option><option>.rdf</option></select><select value={status} onChange={e=>setStatus(e.target.value)}><option value="">All statuses</option><option>Active</option><option>Archived</option></select><button onClick={()=>{setModuleId('');setExtension('');setStatus('')}}>Clear</button></div>}
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
@@ -195,7 +202,7 @@ const Repository: React.FC = () => {
                         >
                           <Download className="h-5 w-5" />
                         </button>
-                        <button className="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors" title="Version History">
+                        <button onClick={() => setHistoryFile(file)} className="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors" title="Version History">
                           <History className="h-5 w-5" />
                         </button>
                         <button className="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
@@ -302,6 +309,7 @@ const Repository: React.FC = () => {
           </div>
         </div>
       )}
+      <VersionHistoryModal open={!!historyFile} fileId={historyFile?.id || null} fileName={historyFile?.file_name || ''} onClose={() => setHistoryFile(null)} />
     </div>
   );
 };
