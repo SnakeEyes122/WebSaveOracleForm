@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
 import bcrypt from 'bcrypt';
+import { createAuditLog } from '../services/auditService';
 
 export const getUsers = async (req: Request, res: Response) => {
   const { data, error } = await supabase
@@ -26,6 +27,7 @@ export const createUser = async (req: Request, res: Response) => {
       .single();
 
     if (error) throw error;
+    await createAuditLog({ userId: req.user!.id, action: 'Create User', entityType: 'User', entityId: data.id, ipAddress: req.ip || undefined });
     res.status(201).json({ message: 'User created successfully', user: data });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
@@ -51,6 +53,7 @@ export const updateUser = async (req: Request, res: Response) => {
       .single();
 
     if (error) throw error;
+    await createAuditLog({ userId: req.user!.id, action: 'Update User', entityType: 'User', entityId: data.id, ipAddress: req.ip || undefined });
     res.status(200).json({ message: 'User updated successfully', user: data });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
@@ -63,6 +66,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     const { error } = await supabase.from('users').delete().eq('id', id);
 
     if (error) throw error;
+    await createAuditLog({ userId: req.user!.id, action: 'Delete User', entityType: 'User', entityId: id as string, ipAddress: req.ip || undefined });
     res.status(200).json({ message: 'User deleted successfully' });
   } catch (error: any) {
     res.status(400).json({ error: error.message });

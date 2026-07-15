@@ -23,6 +23,7 @@ import projectRoutes from './routes/projectRoutes';
 import moduleRoutes from './routes/moduleRoutes';
 import fileRoutes from './routes/fileRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
+import auditLogRoutes from './routes/auditLogRoutes';
 
 // Routes will be added here
 app.use('/api/auth', authRoutes);
@@ -31,6 +32,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/modules', moduleRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/audit-logs', auditLogRoutes);
 
 // Error Handling Middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
