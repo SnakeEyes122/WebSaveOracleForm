@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 
 interface AlertContextType {
   showAlert: (message: string, title?: string) => void;
@@ -15,9 +16,14 @@ export const useAlert = () => {
 };
 
 export const AlertProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [title, setTitle] = useState('Notification');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const showAlert = (msg: string, t?: string) => {
     setMessage(msg);
@@ -33,7 +39,7 @@ export const AlertProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     <AlertContext.Provider value={{ showAlert }}>
       {children}
       
-      {isOpen && (
+      {isOpen && mounted && createPortal(
         <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-[110] backdrop-blur-sm">
           <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 w-full max-w-sm shadow-2xl">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20">
@@ -55,7 +61,8 @@ export const AlertProvider: React.FC<{ children: ReactNode }> = ({ children }) =
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </AlertContext.Provider>
   );

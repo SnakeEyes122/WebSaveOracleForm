@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Bell, Search, Check, Info } from 'lucide-react';
+import { Bell, Check, Info } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -70,15 +70,7 @@ const Header: React.FC = () => {
       </div>
       
       <div className="flex items-center space-x-6 h-full">
-        <div className="relative h-full flex items-center border-l border-r border-gray-200 dark:border-gray-800 px-4">
-          <Search className="h-4 w-4 text-gray-400 mr-2" />
-          <input 
-            type="text" 
-            placeholder="Search repository..." 
-            className="py-1.5 bg-transparent border-none text-sm focus:outline-none focus:ring-0 text-gray-900 dark:text-white w-64 placeholder-gray-400 font-mono"
-          />
-        </div>
-        
+
         {/* Notification Bell */}
         <div className="relative" ref={dropdownRef}>
           <button 
