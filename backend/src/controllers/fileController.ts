@@ -114,7 +114,7 @@ export const uploadFiles = async (req: Request, res: Response) => {
 
       // Upload to Supabase Storage
       const fileTypeDir = extName; 
-      const storagePath = `${systemName}/${fileTypeDir}/${newVersionNumber}_${file_name}`;
+      const storagePath = `${systemName}/${fileTypeDir}/${newVersionNumber}_${encodeURIComponent(file_name)}`;
       
       const { data: storageData, error: storageError } = await supabase.storage
         .from('oracle-forms-repo')
