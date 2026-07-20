@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api', // Works with Vite proxy (dev) and Nginx reverse proxy (prod)
+  baseURL: import.meta.env.VITE_API_URL || '/api', // Works with Vercel (external URL) or Nginx proxy (prod)
   headers: {
     'Content-Type': 'application/json',
   },
