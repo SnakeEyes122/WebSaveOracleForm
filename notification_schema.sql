@@ -29,5 +29,6 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_system_id ON subscriptions(system_i
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON notifications(is_read);
 
--- Grant Permissions (if using Row Level Security, adjust accordingly)
-GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+-- Configure Supabase Row Level Security policies explicitly for the application
+-- roles before exposing these tables. Do not grant unrestricted access to
+-- anon or authenticated users here.

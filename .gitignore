@@ -26,3 +26,6 @@ Thumbs.db
 
 # Coverage directory used by tools like istanbul
 coverage/
+
+# Local agent tooling
+.agents/
