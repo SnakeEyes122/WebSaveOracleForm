@@ -180,7 +180,7 @@ export const getFiles = async (req: Request, res: Response) => {
     if (file_type_id) query = query.eq('file_type_id', file_type_id);
     if (status) query = query.eq('status', status);
     if (search) {
-      query = query.ilike('file_name', `%${search}%`);
+      query = query.or(`file_name.ilike.%${search}%,original_name.ilike.%${search}%`);
     }
 
     const { data, error } = await query;

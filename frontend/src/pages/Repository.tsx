@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Search, Upload, Download, History, MoreVertical, FileCode, Filter, Trash2 } from 'lucide-react';
+import { Upload, Download, History, MoreVertical, FileCode, Filter, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import VersionHistoryModal from './VersionHistoryModal';
 import ConfirmModal from '../components/ConfirmModal';
@@ -22,7 +22,6 @@ const Repository: React.FC = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { showAlert } = useAlert();
-  const [searchTerm, setSearchTerm] = useState('');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [systemId, setSystemId] = useState('');
   const [fileTypeId, setFileTypeId] = useState('');
@@ -48,9 +47,9 @@ const Repository: React.FC = () => {
   };
 
   const { data: files, isLoading } = useQuery<FileData[]>({
-    queryKey: ['files', searchTerm, systemId, fileTypeId, status],
+    queryKey: ['files', systemId, fileTypeId, status],
     queryFn: async () => {
-      const response = await api.get('/files', { params: { search: searchTerm || undefined, system_id: systemId || undefined, file_type_id: fileTypeId || undefined, status: status || undefined } });
+      const response = await api.get('/files', { params: { system_id: systemId || undefined, file_type_id: fileTypeId || undefined, status: status || undefined } });
       return response.data;
     },
   });
@@ -151,16 +150,7 @@ const Repository: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-4 w-full sm:w-auto">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search files..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-1.5 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono placeholder-gray-400 transition-colors"
-            />
-          </div>
+
           <button onClick={() => setFiltersOpen(!filtersOpen)} className="p-1.5 border border-gray-300 dark:border-gray-700 rounded-none text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
             <Filter className="h-4 w-4" />
           </button>
