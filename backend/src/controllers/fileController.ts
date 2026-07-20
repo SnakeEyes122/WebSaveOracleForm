@@ -45,7 +45,8 @@ export const uploadFiles = async (req: Request, res: Response) => {
     const fileTypesMap = new Map(fileTypesData.map(ft => [ft.name.toLowerCase(), ft.id]));
 
     for (const file of files) {
-      const original_name = file.originalname;
+      // Fix multer encoding issue for Thai characters (latin1 -> utf8)
+      const original_name = Buffer.from(file.originalname, 'latin1').toString('utf8');
       const file_name = original_name.replace(/[^a-zA-Z0-9.\-_\u0E00-\u0E7F]/g, '_'); // Allow Thai characters
       
       const extParts = original_name.split('.');
