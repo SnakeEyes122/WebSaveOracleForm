@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, FileArchive, Users, FolderTree, FileSpreadsheet, Activity, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import ConfirmModal from './ConfirmModal';
 
 const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   
   const navItems = [
     { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['Admin', 'Developer', 'Viewer'] },
@@ -56,13 +58,25 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
         <button
-          onClick={logout}
+          onClick={() => setIsLogoutModalOpen(true)}
           className="w-full flex items-center justify-center px-4 py-2 text-xs font-mono uppercase tracking-widest text-gray-600 border border-gray-200 rounded-none hover:bg-gray-50 hover:text-gray-900 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-900 dark:hover:text-gray-100 transition-colors"
         >
           <LogOut className="mr-2 h-3.5 w-3.5" />
           Sign out
         </button>
       </div>
+
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        onCancel={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => {
+          setIsLogoutModalOpen(false);
+          logout();
+        }}
+        title="Sign Out"
+        message="Are you sure you want to sign out of your account?"
+        confirmText="Sign Out"
+      />
     </div>
   );
 };
