@@ -113,8 +113,9 @@ export const uploadFiles = async (req: Request, res: Response) => {
       const checksum_sha256 = crypto.createHash('sha256').update(file.buffer).digest('hex');
 
       // Upload to Supabase Storage
-      const fileTypeDir = extName; 
-      const storagePath = `${systemName}/${fileTypeDir}/${newVersionNumber}_${encodeURIComponent(file_name)}`;
+      const fileTypeDir = extName;
+      const physicalFileName = `${crypto.randomUUID()}.${extName}`;
+      const storagePath = `${systemName}/${fileTypeDir}/${physicalFileName}`;
       
       const { data: storageData, error: storageError } = await supabase.storage
         .from('oracle-forms-repo')
