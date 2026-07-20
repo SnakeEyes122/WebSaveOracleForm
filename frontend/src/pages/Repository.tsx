@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Search, Upload, Download, History, MoreVertical, FileCode, Filter, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import VersionHistoryModal from './VersionHistoryModal';
+import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
 
 interface FileData {
@@ -26,15 +27,21 @@ const Repository: React.FC = () => {
   const [status, setStatus] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [historyFile, setHistoryFile] = useState<FileData | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const handleDelete = async (fileId: string) => {
-    if (confirm('Are you sure you want to delete this file completely? This cannot be undone.')) {
-      try {
-        await api.delete(`/files/${fileId}`);
-        queryClient.invalidateQueries({ queryKey: ['files'] });
-      } catch (error: any) {
-        alert(error.response?.data?.error || 'Failed to delete file.');
-      }
+  const handleDelete = (fileId: string) => {
+    setDeleteId(fileId);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await api.delete(`/files/${deleteId}`);
+      queryClient.invalidateQueries({ queryKey: ['files'] });
+    } catch (error: any) {
+      alert(error.response?.data?.error || 'Failed to delete file.');
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -318,12 +325,12 @@ const Repository: React.FC = () => {
               {selectedFiles.length > 0 && (
                 <div className="mt-6 p-4 border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/20">
                   <p className="text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-3">Selected Files ({selectedFiles.length})</p>
-                  <ul className="text-sm font-mono text-gray-600 dark:text-gray-400 space-y-2">
+                  <ul className="text-sm font-mono text-gray-600 dark:text-gray-400 space-y-2 max-h-48 overflow-y-auto pr-2">
                     {selectedFiles.map((f, idx) => (
                       <li key={idx} className="flex items-center gap-3">
-                        <FileCode className="h-4 w-4 text-gray-400" /> 
-                        <span className="text-gray-900 dark:text-gray-100">{f.name}</span>
-                        <span className="text-gray-400">({(f.size / 1024).toFixed(1)} KB)</span>
+                        <FileCode className="h-4 w-4 text-gray-400 flex-shrink-0" /> 
+                        <span className="text-gray-900 dark:text-gray-100 truncate">{f.name}</span>
+                        <span className="text-gray-400 flex-shrink-0">({(f.size / 1024).toFixed(1)} KB)</span>
                       </li>
                     ))}
                   </ul>
@@ -351,6 +358,15 @@ const Repository: React.FC = () => {
         </div>
       )}
       <VersionHistoryModal open={!!historyFile} fileId={historyFile?.id || null} fileName={historyFile?.file_name || ''} onClose={() => setHistoryFile(null)} />
+      
+      <ConfirmModal 
+        isOpen={!!deleteId}
+        title="Delete File"
+        message="Are you sure you want to delete this file completely? This cannot be undone."
+        confirmText="Delete File"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 };

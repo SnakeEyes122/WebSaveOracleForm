@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
 
 type FileType = { id: string; name: string; description?: string; created_at: string };
@@ -14,6 +15,7 @@ export default function FileTypes() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const { data = [], isLoading } = useQuery<FileType[]>({
     queryKey: ['file-types'],
@@ -56,19 +58,23 @@ export default function FileTypes() {
     }
   };
 
-  const del = async (id: string) => {
-    if (confirm('Are you sure you want to delete this file type?')) {
-      try {
-        await api.delete(`/file-types/${id}`);
-        qc.invalidateQueries({ queryKey: ['file-types'] });
-      } catch (err: any) {
-        alert(err.response?.data?.error || 'Failed to delete file type');
-      }
+  const del = (id: string) => {
+    setDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await api.delete(`/file-types/${deleteId}`);
+      qc.invalidateQueries({ queryKey: ['file-types'] });
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to delete file type');
+    } finally {
+      setDeleteId(null);
     }
   };
 
   const isAdmin = user?.role === 'Admin';
-  const canCreate = user?.role === 'Admin' || user?.role === 'Developer';
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-8">
@@ -77,7 +83,7 @@ export default function FileTypes() {
           <h2 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-white">File Types</h2>
           <p className="text-sm text-gray-500 font-mono mt-1">Manage allowed file extensions (e.g., fmx, fmb, rdf)</p>
         </div>
-        {canCreate && (
+        {isAdmin && (
           <button 
             onClick={openAdd}
             className="flex items-center gap-2 bg-gray-900 hover:bg-black text-white dark:bg-gray-100 dark:hover:bg-white dark:text-gray-900 px-4 py-2 rounded-none transition-colors text-sm font-medium"
@@ -181,6 +187,15 @@ export default function FileTypes() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal 
+        isOpen={!!deleteId}
+        title="Delete File Type"
+        message="Are you sure you want to delete this file type?"
+        confirmText="Delete"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
 import crypto from 'crypto';
 import { createAuditLog } from '../services/auditService';
+import { notifySubscribers, notifyAdmins } from '../services/notificationService';
 
 export const uploadFiles = async (req: Request, res: Response) => {
   try {
@@ -45,13 +46,23 @@ export const uploadFiles = async (req: Request, res: Response) => {
 
     for (const file of files) {
       const original_name = file.originalname;
-      const file_name = original_name.replace(/\s+/g, '_'); // Replace spaces with underscore
-      let extension = original_name.substring(original_name.lastIndexOf('.')).toLowerCase();
-      const extName = extension.replace('.', '');
+      const file_name = original_name.replace(/[^a-zA-Z0-9.\-_]/g, '_'); // More strict sanitization for spaces/special chars
+      
+      const extParts = original_name.split('.');
+      if (extParts.length < 2) {
+        throw new Error(`Invalid file: ${original_name}. No extension found.`);
+      }
+      
+      const extName = extParts.pop()?.toLowerCase() || '';
 
       // Validate extension dynamically against file_types
       if (!fileTypesMap.has(extName)) {
-        throw new Error(`Invalid file extension: ${extension}. Type not allowed in system.`);
+        throw new Error(`Invalid file extension: .${extName}. Type not allowed in system.`);
+      }
+      
+      // Optional: Prevent double extensions for security (e.g., .php.fmx)
+      if (extParts.length > 1 && fileTypesMap.has(extParts[extParts.length - 1].toLowerCase())) {
+         // Just a warning or strict check: here we let it pass but we only trust the final extension.
       }
       
       const file_type_id = fileTypesMap.get(extName);
@@ -138,6 +149,14 @@ export const uploadFiles = async (req: Request, res: Response) => {
       if (req.user) {
         await createAuditLog({ userId: req.user.id, action: 'Upload File', entityType: 'File', entityId: fileId, details: { version: newVersionNumber, fileName: file_name } });
       }
+
+      // Notify users subscribed to this system
+      notifySubscribers(
+        system_id, 
+        `New File Upload: ${file_name}`, 
+        `Version ${newVersionNumber} of ${file_name} was uploaded to ${systemName}. Remark: ${remark || 'None'}`,
+        req.user?.id
+      );
     }
 
     res.status(201).json({ message: 'Files uploaded successfully', data: uploadedFilesData });
@@ -271,6 +290,9 @@ export const deleteFile = async (req: Request, res: Response) => {
       .eq('id', id);
 
     if (error) throw error;
+    
+    notifyAdmins('File Deleted', `File ID ${id} was deleted by ${req.user?.username || 'Unknown User'}`);
+    
     res.status(204).send();
   } catch (error: any) {
     res.status(400).json({ error: error.message });

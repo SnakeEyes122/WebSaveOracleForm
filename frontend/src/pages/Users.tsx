@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
 
 type Role = { id: number; name: string };
 type User = { id: string; username: string; full_name: string | null; is_active: boolean; created_at: string; roles?: Role | Role[] };
@@ -16,6 +17,7 @@ export default function Users() {
   const [roleId, setRoleId] = useState('');
   const [active, setActive] = useState(true);
   const [error, setError] = useState('');
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const { data: users = [], isLoading } = useQuery<User[]>({ queryKey: ['users'], queryFn: () => api.get('/users').then(r => r.data) });
   const { data: roles = [] } = useQuery<Role[]>({ queryKey: ['roles'], queryFn: () => api.get('/users/roles').then(r => r.data) });
@@ -58,10 +60,19 @@ export default function Users() {
     }
   };
 
-  const del = async (id: string) => {
-    if (confirm('Delete this user?')) {
-      await api.delete(`/users/${id}`);
+  const del = (id: string) => {
+    setDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await api.delete(`/users/${deleteId}`);
       qc.invalidateQueries({ queryKey: ['users'] });
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to delete user');
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -214,6 +225,15 @@ export default function Users() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal 
+        isOpen={!!deleteId}
+        title="Delete User"
+        message="Are you sure you want to delete this user? This action cannot be undone."
+        confirmText="Delete User"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 }

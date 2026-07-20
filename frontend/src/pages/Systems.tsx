@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff } from 'lucide-react';
 import api from '../api/axios';
 import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
 
 type System = { id: string; name: string; description?: string; created_at: string };
@@ -14,11 +15,27 @@ export default function Systems() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const { data = [], isLoading } = useQuery<System[]>({
     queryKey: ['systems'],
     queryFn: () => api.get('/systems').then(r => r.data)
   });
+
+  const { data: subscriptions = [], refetch: refetchSubs } = useQuery<string[]>({
+    queryKey: ['subscriptions'],
+    queryFn: () => api.get('/notifications/subscriptions').then(r => r.data),
+    enabled: !!user
+  });
+
+  const toggleSubscription = async (systemId: string) => {
+    try {
+      await api.post('/notifications/subscribe', { system_id: systemId });
+      refetchSubs();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to toggle subscription');
+    }
+  };
 
   const close = () => {
     setIsModalOpen(false);
@@ -56,19 +73,23 @@ export default function Systems() {
     }
   };
 
-  const del = async (id: string) => {
-    if (confirm('Are you sure you want to delete this system? All files under it will also be deleted.')) {
-      try {
-        await api.delete(`/systems/${id}`);
-        qc.invalidateQueries({ queryKey: ['systems'] });
-      } catch (err: any) {
-        alert(err.response?.data?.error || 'Failed to delete system');
-      }
+  const del = (id: string) => {
+    setDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await api.delete(`/systems/${deleteId}`);
+      qc.invalidateQueries({ queryKey: ['systems'] });
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to delete system');
+    } finally {
+      setDeleteId(null);
     }
   };
 
   const isAdmin = user?.role === 'Admin';
-  const canCreate = user?.role === 'Admin' || user?.role === 'Developer';
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-8">
@@ -77,7 +98,7 @@ export default function Systems() {
           <h2 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-white">Systems</h2>
           <p className="text-sm text-gray-500 font-mono mt-1">Manage physical systems and applications</p>
         </div>
-        {canCreate && (
+        {isAdmin && (
           <button 
             onClick={openAdd}
             className="flex items-center gap-2 bg-gray-900 hover:bg-black text-white dark:bg-gray-100 dark:hover:bg-white dark:text-gray-900 px-4 py-2 rounded-none transition-colors text-sm font-medium"
@@ -96,7 +117,7 @@ export default function Systems() {
                 <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Name</th>
                 <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Description</th>
                 <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Created At</th>
-                {isAdmin && <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest text-right">Actions</th>}
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
@@ -120,26 +141,35 @@ export default function Systems() {
                     <td className="px-6 py-4 text-sm font-mono text-gray-500">
                       {new Date(system.created_at).toLocaleDateString()}
                     </td>
-                    {isAdmin && (
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button 
-                            onClick={() => openEdit(system)}
-                            className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white transition-colors"
-                            title="Edit"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </button>
-                          <button 
-                            onClick={() => del(system.id)}
-                            className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors"
-                            title="Delete"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    )}
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => toggleSubscription(system.id)}
+                          className={`p-1.5 transition-colors ${subscriptions.includes(system.id) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white'}`}
+                          title={subscriptions.includes(system.id) ? 'Unwatch System' : 'Watch System'}
+                        >
+                          {subscriptions.includes(system.id) ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                        </button>
+                        {isAdmin && (
+                          <>
+                            <button 
+                              onClick={() => openEdit(system)}
+                              className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white transition-colors"
+                              title="Edit"
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </button>
+                            <button 
+                              onClick={() => del(system.id)}
+                              className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}
@@ -179,6 +209,15 @@ export default function Systems() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal 
+        isOpen={!!deleteId}
+        title="Delete System"
+        message="Are you sure you want to delete this system? All files under it will also be deleted. This cannot be undone."
+        confirmText="Delete System"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 }

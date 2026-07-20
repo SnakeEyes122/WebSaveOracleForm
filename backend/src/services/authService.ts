@@ -1,6 +1,6 @@
 import { supabase } from '../config/supabase';
 import bcrypt from 'bcrypt';
-import { generateToken } from '../utils/jwt';
+import { generateToken, generateRefreshToken } from '../utils/jwt';
 
 export const loginUser = async (username: string, passwordString: string) => {
   // Fetch user from Supabase (including role)
@@ -32,7 +32,7 @@ export const loginUser = async (username: string, passwordString: string) => {
   }
 
   // Generate Token
-  // @ts-ignore - Supabase returns array or single object for joined table, in our schema role is 1:1
+  // @ts-ignore
   const roleName = user.roles ? (Array.isArray(user.roles) ? user.roles[0].name : user.roles.name) : 'Viewer';
   
   const token = generateToken({
@@ -41,5 +41,11 @@ export const loginUser = async (username: string, passwordString: string) => {
     role: roleName,
   });
 
-  return { user, token };
+  const refreshToken = generateRefreshToken({
+    id: user.id,
+    username: user.username,
+    role: roleName,
+  });
+
+  return { user, token, refreshToken };
 };

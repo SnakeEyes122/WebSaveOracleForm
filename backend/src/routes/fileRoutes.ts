@@ -5,9 +5,12 @@ import { authenticate, requireRole } from '../middlewares/authMiddleware';
 
 const router = Router();
 
-// Configure multer for memory storage (we upload to Supabase directly)
+// Configure multer for memory storage with a 50MB file size limit
 const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 } // 50 MB limit
+});
 
 router.use(authenticate);
 

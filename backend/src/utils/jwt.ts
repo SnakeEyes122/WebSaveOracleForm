@@ -8,7 +8,13 @@ export interface JwtPayload {
 }
 
 export const generateToken = (payload: JwtPayload): string => {
-  return jwt.sign(payload, config.jwtSecret, { expiresIn: '1d' });
+  // Shorter lifespan for access token (e.g. 15 minutes)
+  return jwt.sign(payload, config.jwtSecret, { expiresIn: '15m' });
+};
+
+export const generateRefreshToken = (payload: JwtPayload): string => {
+  // Longer lifespan for refresh token (e.g. 7 days)
+  return jwt.sign(payload, config.jwtSecret, { expiresIn: '7d' });
 };
 
 export const verifyToken = (token: string): JwtPayload | null => {

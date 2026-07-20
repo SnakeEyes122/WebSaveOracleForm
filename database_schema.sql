@@ -142,7 +142,8 @@ CREATE TRIGGER update_files_updated_at BEFORE UPDATE ON files FOR EACH ROW EXECU
 -- ==============================================================================
 -- DEFAULT ADMIN USER SEED
 -- ==============================================================================
--- Password: password123 (hashed with bcrypt - cost 10)
+-- WARNING: The default password is 'password123' (hashed with bcrypt - cost 10)
+-- It is strongly recommended to change this password immediately after the first deployment.
 INSERT INTO users (username, password_hash, role_id, full_name)
 VALUES (
     'admin', 
