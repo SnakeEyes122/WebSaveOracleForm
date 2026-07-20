@@ -5,12 +5,14 @@ import api from '../api/axios';
 import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
+import { useAlert } from '../context/AlertContext';
 
 type System = { id: string; name: string; description?: string; created_at: string };
 
 export default function Systems() {
   const qc = useQueryClient();
   const { user } = useAuth();
+  const { showAlert } = useAlert();
   const [edit, setEdit] = useState<System | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -33,7 +35,7 @@ export default function Systems() {
       await api.post('/notifications/subscribe', { system_id: systemId });
       refetchSubs();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to toggle subscription');
+      showAlert(err.response?.data?.error || 'Failed to toggle subscription', 'Error');
     }
   };
 
@@ -69,7 +71,7 @@ export default function Systems() {
       qc.invalidateQueries({ queryKey: ['systems'] });
       close();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to save system');
+      showAlert(err.response?.data?.error || 'Failed to save system', 'Error');
     }
   };
 
@@ -83,7 +85,7 @@ export default function Systems() {
       await api.delete(`/systems/${deleteId}`);
       qc.invalidateQueries({ queryKey: ['systems'] });
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete system');
+      showAlert(err.response?.data?.error || 'Failed to delete system', 'Error');
     } finally {
       setDeleteId(null);
     }

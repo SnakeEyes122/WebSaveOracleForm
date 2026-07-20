@@ -5,12 +5,14 @@ import api from '../api/axios';
 import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
+import { useAlert } from '../context/AlertContext';
 
 type FileType = { id: string; name: string; description?: string; created_at: string };
 
 export default function FileTypes() {
   const qc = useQueryClient();
   const { user } = useAuth();
+  const { showAlert } = useAlert();
   const [edit, setEdit] = useState<FileType | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -54,7 +56,7 @@ export default function FileTypes() {
       qc.invalidateQueries({ queryKey: ['file-types'] });
       close();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to save file type');
+      showAlert(err.response?.data?.error || 'Failed to save file type', 'Error');
     }
   };
 
@@ -68,7 +70,7 @@ export default function FileTypes() {
       await api.delete(`/file-types/${deleteId}`);
       qc.invalidateQueries({ queryKey: ['file-types'] });
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete file type');
+      showAlert(err.response?.data?.error || 'Failed to delete file type', 'Error');
     } finally {
       setDeleteId(null);
     }

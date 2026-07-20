@@ -5,6 +5,7 @@ import api from '../api/axios';
 import VersionHistoryModal from './VersionHistoryModal';
 import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
+import { useAlert } from '../context/AlertContext';
 
 interface FileData {
   id: string;
@@ -20,6 +21,7 @@ interface FileData {
 const Repository: React.FC = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
   const [searchTerm, setSearchTerm] = useState('');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [systemId, setSystemId] = useState('');
@@ -39,7 +41,7 @@ const Repository: React.FC = () => {
       await api.delete(`/files/${deleteId}`);
       queryClient.invalidateQueries({ queryKey: ['files'] });
     } catch (error: any) {
-      alert(error.response?.data?.error || 'Failed to delete file.');
+      showAlert(error.response?.data?.error || 'Failed to delete file.', 'Error');
     } finally {
       setDeleteId(null);
     }
@@ -59,7 +61,7 @@ const Repository: React.FC = () => {
       const versionsRes = await api.get(`/files/${fileId}/versions`);
       const versions = versionsRes.data;
       if (!versions || versions.length === 0) {
-        return alert("No versions found for this file.");
+        return showAlert("No versions found for this file.", 'Warning');
       }
       const latestVersionId = versions[0].id;
 
@@ -77,7 +79,7 @@ const Repository: React.FC = () => {
       link.remove();
     } catch (error) {
       console.error(error);
-      alert("Failed to download file.");
+      showAlert("Failed to download file.", 'Error');
     }
   };
 
@@ -110,8 +112,8 @@ const Repository: React.FC = () => {
   };
 
   const handleUploadSubmit = async () => {
-    if (selectedFiles.length === 0) return alert('Please select files to upload.');
-    if (!selectedSystemId) return alert('Please select a system.');
+    if (selectedFiles.length === 0) return showAlert('Please select files to upload.', 'Warning');
+    if (!selectedSystemId) return showAlert('Please select a system.', 'Warning');
 
     const formData = new FormData();
     selectedFiles.forEach(file => {
@@ -127,12 +129,14 @@ const Repository: React.FC = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
-      alert('Files uploaded successfully!');
+      queryClient.invalidateQueries({ queryKey: ['files'] });
       setIsUploadModalOpen(false);
       setSelectedFiles([]);
-      queryClient.invalidateQueries({ queryKey: ['files'] });
+      setRemark('');
+      showAlert('Files uploaded successfully!', 'Success');
     } catch (error: any) {
-      alert(error.response?.data?.error || 'Failed to upload files.');
+      console.error('Upload error:', error);
+      showAlert(error.response?.data?.error || 'Failed to upload files.', 'Error');
     } finally {
       setIsUploading(false);
     }

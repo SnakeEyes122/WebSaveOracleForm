@@ -11,6 +11,8 @@ import FileTypes from './pages/FileTypes';
 import AuditLogs from './pages/AuditLogs';
 import Users from './pages/Users';
 
+import { AlertProvider } from './context/AlertContext';
+
 // Placeholder components for routes
 
 const queryClient = new QueryClient();
@@ -18,25 +20,27 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            
-            <Route path="/" element={<DashboardLayout />}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="repository" element={<Repository />} />
-              <Route path="systems" element={<Systems />} />
-              <Route path="file-types" element={<FileTypes />} />
-              <Route path="users" element={<Users />} />
-              <Route path="audit-logs" element={<AuditLogs />} />
-            </Route>
-            
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </Router>
-      </AuthProvider>
+      <AlertProvider>
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              
+              <Route path="/" element={<DashboardLayout />}>
+                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="repository" element={<Repository />} />
+                <Route path="systems" element={<Systems />} />
+                <Route path="file-types" element={<FileTypes />} />
+                <Route path="users" element={<Users />} />
+                <Route path="audit-logs" element={<AuditLogs />} />
+              </Route>
+              
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </AlertProvider>
     </QueryClientProvider>
   );
 }

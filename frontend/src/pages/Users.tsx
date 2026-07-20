@@ -4,12 +4,14 @@ import { Plus, Edit2, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
+import { useAlert } from '../context/AlertContext';
 
 type Role = { id: number; name: string };
 type User = { id: string; username: string; full_name: string | null; is_active: boolean; created_at: string; roles?: Role | Role[] };
 
 export default function Users() {
   const qc = useQueryClient();
+  const { showAlert } = useAlert();
   const [edit, setEdit] = useState<User | null>(null);
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
@@ -70,7 +72,7 @@ export default function Users() {
       await api.delete(`/users/${deleteId}`);
       qc.invalidateQueries({ queryKey: ['users'] });
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete user');
+      showAlert(err.response?.data?.error || 'Failed to delete user', 'Error');
     } finally {
       setDeleteId(null);
     }

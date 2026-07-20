@@ -46,7 +46,7 @@ export const uploadFiles = async (req: Request, res: Response) => {
 
     for (const file of files) {
       const original_name = file.originalname;
-      const file_name = original_name.replace(/[^a-zA-Z0-9.\-_]/g, '_'); // More strict sanitization for spaces/special chars
+      const file_name = original_name.replace(/[^a-zA-Z0-9.\-_\u0E00-\u0E7F]/g, '_'); // Allow Thai characters
       
       const extParts = original_name.split('.');
       if (extParts.length < 2) {
