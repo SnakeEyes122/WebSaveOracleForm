@@ -11,8 +11,8 @@ router.use(authenticate);
 // Everyone can view file types
 router.get('/', getFileTypes);
 
-// Only Admin can manage file types
-router.post('/', requireRole(['Admin']), validateRequest(fileTypeSchema), createFileType);
+// Admin and Developer can create file types, but only Admin can edit/delete
+router.post('/', requireRole(['Admin', 'Developer']), validateRequest(fileTypeSchema), createFileType);
 router.put('/:id', requireRole(['Admin']), validateRequest(fileTypeSchema), updateFileType);
 router.delete('/:id', requireRole(['Admin']), deleteFileType);
 
