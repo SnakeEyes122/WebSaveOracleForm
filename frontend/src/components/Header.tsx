@@ -74,18 +74,20 @@ const Header: React.FC = () => {
       <div className="flex items-center space-x-6 h-full">
 
         {/* Theme Toggle */}
-        <button 
-          onClick={toggleTheme}
-          className="text-ink-dim hover:text-ink-near-white transition-colors focus:outline-none"
-        >
-          {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center">
+          <button 
+            onClick={toggleTheme}
+            className="flex items-center justify-center text-ink-dim hover:text-ink-near-white transition-colors focus:outline-none"
+          >
+            {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+          </button>
+        </div>
 
         {/* Notification Bell */}
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative flex items-center" ref={dropdownRef}>
           <button 
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="text-ink-dim hover:text-ink-near-white relative transition-colors focus:outline-none"
+            className="flex items-center justify-center text-ink-dim hover:text-ink-near-white relative transition-colors focus:outline-none"
           >
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
