@@ -5,33 +5,66 @@
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   
-  --color-canvas: #000f0f;
-  --color-canvas-surface: #000000;
-  --color-surface-card: #13302e;
-  --color-surface-card-2: #1f403e;
+  --color-canvas: var(--bg-canvas);
+  --color-canvas-surface: var(--bg-canvas-surface);
+  --color-surface-card: var(--bg-surface-card);
+  --color-surface-card-2: var(--bg-surface-card-2);
   
   --color-brand-foam: #6fe0ed;
   --color-brand-cerulean: #5198fb;
   --color-brand-foam-deep: #104b55;
   
-  --color-ink-near-white: #f4f5f5;
-  --color-ink-light: #e5eceb;
-  --color-ink-dim: #6f908c;
-  --color-ink-soft: #4d5b7c;
-  --color-ink-pure: #ffffff;
+  --color-ink-near-white: var(--text-near-white);
+  --color-ink-light: var(--text-light);
+  --color-ink-dim: var(--text-dim);
+  --color-ink-soft: var(--text-soft);
+  --color-ink-pure: var(--text-pure);
   
-  --color-hairline: #e5eceb;
-  --color-hairline-dim: #6f908c;
+  --color-hairline: var(--border-hairline);
+  --color-hairline-dim: var(--border-hairline-dim);
 
   --radius-pill: 40px;
 }
 
 @layer base {
+  :root, .light {
+    --bg-canvas: #f8fafc;
+    --bg-canvas-surface: #ffffff;
+    --bg-surface-card: #ffffff;
+    --bg-surface-card-2: #e2e8f0;
+    
+    --text-pure: #0f172a;
+    --text-near-white: #1e293b;
+    --text-light: #334155;
+    --text-dim: #64748b;
+    --text-soft: #94a3b8;
+    
+    --border-hairline: #e2e8f0;
+    --border-hairline-dim: #cbd5e1;
+    color-scheme: light;
+  }
+
+  .dark {
+    --bg-canvas: #000f0f;
+    --bg-canvas-surface: #000000;
+    --bg-surface-card: #13302e;
+    --bg-surface-card-2: #1f403e;
+    
+    --text-pure: #ffffff;
+    --text-near-white: #f4f5f5;
+    --text-light: #e5eceb;
+    --text-dim: #6f908c;
+    --text-soft: #4d5b7c;
+    
+    --border-hairline: #e5eceb;
+    --border-hairline-dim: #6f908c;
+    color-scheme: dark;
+  }
+
   html {
     font-family: var(--font-body);
     background-color: var(--color-canvas);
     color: var(--color-ink-near-white);
-    color-scheme: dark;
   }
   
   body {

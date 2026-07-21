@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Bell, Check, Info } from 'lucide-react';
+import { Bell, Check, Info, Sun, Moon } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 type Notification = {
   id: string;
@@ -17,6 +18,7 @@ type Notification = {
 const Header: React.FC = () => {
   const location = useLocation();
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const queryClient = useQueryClient();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -70,6 +72,14 @@ const Header: React.FC = () => {
       </div>
       
       <div className="flex items-center space-x-6 h-full">
+
+        {/* Theme Toggle */}
+        <button 
+          onClick={toggleTheme}
+          className="text-ink-dim hover:text-ink-near-white transition-colors focus:outline-none"
+        >
+          {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+        </button>
 
         {/* Notification Bell */}
         <div className="relative" ref={dropdownRef}>

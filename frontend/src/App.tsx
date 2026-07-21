@@ -11,6 +11,7 @@ import FileTypes from './pages/FileTypes';
 import AuditLogs from './pages/AuditLogs';
 import Users from './pages/Users';
 
+import { ThemeProvider } from './context/ThemeContext';
 import { AlertProvider } from './context/AlertContext';
 
 // Placeholder components for routes
@@ -20,9 +21,10 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AlertProvider>
-        <AuthProvider>
-          <Router>
+      <ThemeProvider>
+        <AlertProvider>
+          <AuthProvider>
+            <Router>
             <Routes>
               <Route path="/login" element={<Login />} />
               
@@ -41,6 +43,7 @@ function App() {
           </Router>
         </AuthProvider>
       </AlertProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
