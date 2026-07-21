@@ -33,21 +33,13 @@ const Dashboard: React.FC = () => {
       </div>
       
       {/* Stat Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0a0a0a] mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0a0a0a] mb-12">
         <div className="p-6 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-4">
             <p className="text-xs font-mono uppercase tracking-widest text-gray-500">Total Files</p>
             <Database className="h-4 w-4 text-gray-400" />
           </div>
           <h3 className="text-3xl font-medium text-gray-900 dark:text-white">{stats?.totalFiles || 0}</h3>
-        </div>
-
-        <div className="p-6 border-b md:border-b-0 lg:border-r border-gray-200 dark:border-gray-800 flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-xs font-mono uppercase tracking-widest text-gray-500">Forms (.fmb)</p>
-            <FileCode className="h-4 w-4 text-gray-400" />
-          </div>
-          <h3 className="text-3xl font-medium text-gray-900 dark:text-white">{stats?.extensions.fmb || 0}</h3>
         </div>
 
         <div className="p-6 border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800 flex flex-col justify-between">
