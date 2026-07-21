@@ -95,10 +95,10 @@ export default function Systems() {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-8">
-      <div className="border-b border-gray-200 dark:border-gray-800 pb-4 mb-8 flex justify-between items-end">
+      <div className="border-b border-surface-card-2 pb-4 mb-8 flex justify-between items-end">
         <div>
-          <h2 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-white">Systems</h2>
-          <p className="text-sm text-gray-500 font-mono mt-1">Manage physical systems and applications</p>
+          <h2 className="text-2xl font-medium tracking-tight text-ink-pure font-display">Systems</h2>
+          <p className="text-sm text-ink-dim font-mono mt-1">Manage physical systems and applications</p>
         </div>
         {isAdmin && (
           <button 
@@ -111,43 +111,43 @@ export default function Systems() {
         )}
       </div>
 
-      <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 overflow-hidden">
+      <div className="bg-surface-card border border-surface-card-2 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20">
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Name</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Description</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Created At</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest text-right">Actions</th>
+              <tr className="border-b border-surface-card-2 bg-surface-card-2">
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">Name</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">Description</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">Created At</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+            <tbody className="divide-y divide-surface-card-2">
               {isLoading ? (
                 <tr>
-                  <td colSpan={isAdmin ? 4 : 3} className="px-6 py-8 text-center text-sm font-mono text-gray-500">Loading systems...</td>
+                  <td colSpan={isAdmin ? 4 : 3} className="px-6 py-8 text-center text-sm font-mono text-ink-dim">Loading systems...</td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={isAdmin ? 4 : 3} className="px-6 py-8 text-center text-sm font-mono text-gray-500">No systems found.</td>
+                  <td colSpan={isAdmin ? 4 : 3} className="px-6 py-8 text-center text-sm font-mono text-ink-dim">No systems found.</td>
                 </tr>
               ) : (
                 data.map((system) => (
-                  <tr key={system.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors group">
+                  <tr key={system.id} className="hover:bg-surface-card-2 transition-colors group">
                     <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900 dark:text-gray-100">{system.name}</p>
+                      <p className="font-medium text-ink-near-white">{system.name}</p>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    <td className="px-6 py-4 text-sm text-ink-dim dark:text-ink-dim">
                       {system.description || '-'}
                     </td>
-                    <td className="px-6 py-4 text-sm font-mono text-gray-500">
+                    <td className="px-6 py-4 text-sm font-mono text-ink-dim">
                       {new Date(system.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => toggleSubscription(system.id)}
-                          className={`p-1.5 transition-colors ${subscriptions.includes(system.id) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white'}`}
+                          className={`p-1.5 transition-colors ${subscriptions.includes(system.id) ? 'text-blue-600 dark:text-blue-400' : 'text-ink-dim hover:text-gray-900 dark:text-ink-dim dark:hover:text-white'}`}
                           title={subscriptions.includes(system.id) ? 'Unwatch System' : 'Watch System'}
                         >
                           {subscriptions.includes(system.id) ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
@@ -156,14 +156,14 @@ export default function Systems() {
                           <>
                             <button 
                               onClick={() => openEdit(system)}
-                              className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white transition-colors"
+                              className="p-1.5 text-ink-dim hover:text-gray-900 dark:text-ink-dim dark:hover:text-white transition-colors"
                               title="Edit"
                             >
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button 
                               onClick={() => del(system.id)}
-                              className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors"
+                              className="p-1.5 text-ink-dim hover:text-red-600 dark:text-ink-dim dark:hover:text-red-400 transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -183,26 +183,26 @@ export default function Systems() {
       <Modal open={isModalOpen} title={edit?.id ? 'Edit System' : 'Add System'} onClose={close}>
         <div className="space-y-6 mt-4">
           <div>
-            <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">System Name *</label>
+            <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">System Name *</label>
             <input 
               type="text" 
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono transition-colors"
+              className="w-full p-2 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors"
               placeholder="e.g. HR System" 
               value={name} 
               onChange={e => setName(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">Description</label>
+            <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Description</label>
             <textarea 
-              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono transition-colors h-24"
+              className="w-full p-3 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors h-24"
               placeholder="Optional description" 
               value={description} 
               onChange={e => setDescription(e.target.value)}
             />
           </div>
-          <div className="pt-6 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-800 -mx-6 px-6 pb-2">
-            <button onClick={close} className="px-6 py-2 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-none transition-colors">
+          <div className="pt-6 flex justify-end gap-3 border-t border-surface-card-2 -mx-6 px-6 pb-2">
+            <button onClick={close} className="px-6 py-2 border border-gray-300 border-surface-card-2 text-sm font-medium text-gray-700 text-ink-near-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-none transition-colors">
               Cancel
             </button>
             <button onClick={save} disabled={!name.trim()} className="px-6 py-2 bg-gray-900 hover:bg-black dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 disabled:opacity-50 text-sm font-medium rounded-none transition-colors">

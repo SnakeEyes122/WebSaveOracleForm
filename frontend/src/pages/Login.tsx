@@ -38,16 +38,16 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#0a0a0a] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full border border-gray-200 dark:border-gray-800">
-        <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20 text-center">
-          <div className="mx-auto h-12 w-12 flex items-center justify-center border border-gray-300 dark:border-gray-700 mb-4 bg-white dark:bg-[#0a0a0a]">
-            <Database className="h-6 w-6 text-gray-900 dark:text-white" />
+    <div className="min-h-screen flex items-center justify-center bg-surface-card py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full border border-surface-card-2">
+        <div className="px-8 py-6 border-b border-surface-card-2 bg-surface-card-2 text-center">
+          <div className="mx-auto h-12 w-12 flex items-center justify-center border border-gray-300 border-surface-card-2 mb-4 bg-surface-card">
+            <Database className="h-6 w-6 text-ink-pure font-display" />
           </div>
-          <h2 className="text-xl font-medium tracking-tight text-gray-900 dark:text-white">
+          <h2 className="text-xl font-medium tracking-tight text-ink-pure font-display">
             Oracle Forms Repository
           </h2>
-          <p className="mt-2 text-xs font-mono text-gray-500 uppercase tracking-widest">
+          <p className="mt-2 text-xs font-mono text-ink-dim uppercase tracking-widest">
             System Authentication
           </p>
         </div>
@@ -60,30 +60,30 @@ const Login: React.FC = () => {
             )}
             <div className="space-y-5">
               <div>
-                <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">Username</label>
+                <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Username</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-4 w-4 text-gray-400" />
+                    <User className="h-4 w-4 text-ink-dim" />
                   </div>
                   <input
                     type="text"
                     {...register('username')}
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono transition-colors"
+                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors"
                     placeholder="admin"
                   />
                 </div>
                 {errors.username && <p className="mt-1 text-xs font-mono text-red-500">{errors.username.message}</p>}
               </div>
               <div>
-                <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">Password</label>
+                <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-4 w-4 text-gray-400" />
+                    <Lock className="h-4 w-4 text-ink-dim" />
                   </div>
                   <input
                     type="password"
                     {...register('password')}
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono transition-colors"
+                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors"
                     placeholder="••••••••"
                   />
                 </div>

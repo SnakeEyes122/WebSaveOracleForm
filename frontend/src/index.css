@@ -1,17 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
-  --color-brand: #0055ff;
-  --color-brand-hover: #0044cc;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-canvas: #000f0f;
+  --color-canvas-surface: #000000;
+  --color-surface-card: #13302e;
+  --color-surface-card-2: #1f403e;
+  
+  --color-brand-foam: #6fe0ed;
+  --color-brand-cerulean: #5198fb;
+  --color-brand-foam-deep: #104b55;
+  
+  --color-ink-near-white: #f4f5f5;
+  --color-ink-light: #e5eceb;
+  --color-ink-dim: #6f908c;
+  --color-ink-soft: #4d5b7c;
+  --color-ink-pure: #ffffff;
+  
+  --color-hairline: #e5eceb;
+  --color-hairline-dim: #6f908c;
+
+  --radius-pill: 40px;
 }
 
 @layer base {
   html {
-    font-family: var(--font-sans);
-    background-color: #fcfcfc;
-    color: #111;
+    font-family: var(--font-body);
+    background-color: var(--color-canvas);
+    color: var(--color-ink-near-white);
+    color-scheme: dark;
   }
   
   body {
@@ -19,16 +39,15 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Thin 1px visible rules everywhere instead of borders if desired */
   * {
-    border-color: #e5e7eb;
+    border-color: var(--color-surface-card-2);
   }
 }
 
 @layer utilities {
   .grid-bg {
-    background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-                      linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+    background-image: linear-gradient(to right, var(--color-surface-card-2) 1px, transparent 1px),
+                      linear-gradient(to bottom, var(--color-surface-card-2) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 }

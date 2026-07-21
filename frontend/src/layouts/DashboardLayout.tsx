@@ -12,11 +12,11 @@ const DashboardLayout: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden font-sans">
+    <div className="flex h-screen bg-canvas overflow-hidden font-body text-ink-near-white">
       <Sidebar />
       <div className="flex-1 flex flex-col ml-64 overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900 p-8">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-canvas p-8">
           <Outlet />
         </main>
       </div>

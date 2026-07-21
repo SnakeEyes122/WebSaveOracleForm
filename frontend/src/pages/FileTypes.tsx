@@ -80,10 +80,10 @@ export default function FileTypes() {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-8">
-      <div className="border-b border-gray-200 dark:border-gray-800 pb-4 mb-8 flex justify-between items-end">
+      <div className="border-b border-surface-card-2 pb-4 mb-8 flex justify-between items-end">
         <div>
-          <h2 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-white">File Types</h2>
-          <p className="text-sm text-gray-500 font-mono mt-1">Manage allowed file extensions (e.g., fmx, fmb, rdf)</p>
+          <h2 className="text-2xl font-medium tracking-tight text-ink-pure font-display">File Types</h2>
+          <p className="text-sm text-ink-dim font-mono mt-1">Manage allowed file extensions (e.g., fmx, fmb, rdf)</p>
         </div>
         {isAdmin && (
           <button 
@@ -96,38 +96,38 @@ export default function FileTypes() {
         )}
       </div>
 
-      <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 overflow-hidden">
+      <div className="bg-surface-card border border-surface-card-2 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20">
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Extension</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Description</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Created At</th>
-                {isAdmin && <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest text-right">Actions</th>}
+              <tr className="border-b border-surface-card-2 bg-surface-card-2">
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">Extension</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">Description</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">Created At</th>
+                {isAdmin && <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest text-right">Actions</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+            <tbody className="divide-y divide-surface-card-2">
               {isLoading ? (
                 <tr>
-                  <td colSpan={isAdmin ? 4 : 3} className="px-6 py-8 text-center text-sm font-mono text-gray-500">Loading file types...</td>
+                  <td colSpan={isAdmin ? 4 : 3} className="px-6 py-8 text-center text-sm font-mono text-ink-dim">Loading file types...</td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={isAdmin ? 4 : 3} className="px-6 py-8 text-center text-sm font-mono text-gray-500">No file types found.</td>
+                  <td colSpan={isAdmin ? 4 : 3} className="px-6 py-8 text-center text-sm font-mono text-ink-dim">No file types found.</td>
                 </tr>
               ) : (
                 data.map((type) => (
-                  <tr key={type.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors group">
+                  <tr key={type.id} className="hover:bg-surface-card-2 transition-colors group">
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 px-2 py-0.5 uppercase">
+                      <span className="font-mono text-xs text-ink-near-white border border-gray-300 border-surface-card-2 px-2 py-0.5 uppercase">
                         {type.name}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                    <td className="px-6 py-4 text-sm text-ink-dim dark:text-ink-dim">
                       {type.description || '-'}
                     </td>
-                    <td className="px-6 py-4 text-sm font-mono text-gray-500">
+                    <td className="px-6 py-4 text-sm font-mono text-ink-dim">
                       {new Date(type.created_at).toLocaleDateString()}
                     </td>
                     {isAdmin && (
@@ -135,14 +135,14 @@ export default function FileTypes() {
                         <div className="flex items-center justify-end gap-2">
                           <button 
                             onClick={() => openEdit(type)}
-                            className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white transition-colors"
+                            className="p-1.5 text-ink-dim hover:text-gray-900 dark:text-ink-dim dark:hover:text-white transition-colors"
                             title="Edit"
                           >
                             <Edit2 className="h-4 w-4" />
                           </button>
                           <button 
                             onClick={() => del(type.id)}
-                            className="p-1.5 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 transition-colors"
+                            className="p-1.5 text-ink-dim hover:text-red-600 dark:text-ink-dim dark:hover:text-red-400 transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -161,26 +161,26 @@ export default function FileTypes() {
       <Modal open={isModalOpen} title={edit?.id ? 'Edit File Type' : 'Add File Type'} onClose={close}>
         <div className="space-y-6 mt-4">
           <div>
-            <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">File Extension *</label>
+            <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">File Extension *</label>
             <input 
               type="text" 
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono transition-colors"
+              className="w-full p-2 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors"
               placeholder="e.g. fmx, pdf" 
               value={name} 
               onChange={e => setName(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">Description</label>
+            <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Description</label>
             <textarea 
-              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono transition-colors h-24"
+              className="w-full p-3 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors h-24"
               placeholder="e.g. Oracle Forms Executable" 
               value={description} 
               onChange={e => setDescription(e.target.value)}
             />
           </div>
-          <div className="pt-6 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-800 -mx-6 px-6 pb-2">
-            <button onClick={close} className="px-6 py-2 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-none transition-colors">
+          <div className="pt-6 flex justify-end gap-3 border-t border-surface-card-2 -mx-6 px-6 pb-2">
+            <button onClick={close} className="px-6 py-2 border border-gray-300 border-surface-card-2 text-sm font-medium text-gray-700 text-ink-near-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-none transition-colors">
               Cancel
             </button>
             <button onClick={save} disabled={!name.trim()} className="px-6 py-2 bg-gray-900 hover:bg-black dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 disabled:opacity-50 text-sm font-medium rounded-none transition-colors">

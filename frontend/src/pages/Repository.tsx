@@ -144,24 +144,24 @@ const Repository: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-8">
-      <div className="border-b border-gray-200 dark:border-gray-800 pb-4 mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="border-b border-surface-card-2 pb-4 mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-medium tracking-tight text-gray-900 dark:text-white">File Repository</h2>
-          <p className="text-sm text-gray-500 font-mono mt-1">Manage and track Oracle Forms files</p>
+          <h2 className="text-2xl font-medium tracking-tight text-ink-pure font-display">File Repository</h2>
+          <p className="text-sm text-ink-dim font-mono mt-1">Manage and track Oracle Forms files</p>
         </div>
         
         <div className="flex items-center gap-4 w-full sm:w-auto">
           <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-dim" />
             <input
               type="text"
               placeholder="Search files..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-1.5 border border-gray-300 dark:border-gray-700 rounded-none bg-white dark:bg-[#0a0a0a] text-sm text-gray-900 dark:text-white focus:outline-none focus:border-gray-500 font-mono placeholder-gray-400 transition-colors"
+              className="w-full pl-9 pr-4 py-1.5 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono placeholder-gray-400 transition-colors"
             />
           </div>
-          <button onClick={() => setFiltersOpen(!filtersOpen)} className="p-1.5 border border-gray-300 dark:border-gray-700 rounded-none text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+          <button onClick={() => setFiltersOpen(!filtersOpen)} className="p-1.5 border border-gray-300 border-surface-card-2 rounded-none text-ink-dim dark:text-ink-dim hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
             <Filter className="h-4 w-4" />
           </button>
           {user?.role !== 'Viewer' && (
@@ -177,94 +177,94 @@ const Repository: React.FC = () => {
       </div>
       
       {filtersOpen && (
-        <div className="flex gap-4 p-4 border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0a0a0a] mb-8">
-          <select className="border border-gray-300 dark:border-gray-700 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={systemId} onChange={e=>setSystemId(e.target.value)}>
+        <div className="flex gap-4 p-4 border border-surface-card-2 bg-surface-card mb-8">
+          <select className="border border-gray-300 border-surface-card-2 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={systemId} onChange={e=>setSystemId(e.target.value)}>
             <option value="">All systems</option>
             {systems?.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
-          <select className="border border-gray-300 dark:border-gray-700 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={fileTypeId} onChange={e=>setFileTypeId(e.target.value)}>
+          <select className="border border-gray-300 border-surface-card-2 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={fileTypeId} onChange={e=>setFileTypeId(e.target.value)}>
             <option value="">All types</option>
             {fileTypes?.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
-          <select className="border border-gray-300 dark:border-gray-700 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={status} onChange={e=>setStatus(e.target.value)}>
+          <select className="border border-gray-300 border-surface-card-2 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={status} onChange={e=>setStatus(e.target.value)}>
             <option value="">All statuses</option>
             <option>Active</option>
             <option>Archived</option>
           </select>
-          <button onClick={()=>{setSystemId('');setFileTypeId('');setStatus('')}} className="px-4 py-1.5 text-sm font-mono uppercase tracking-widest text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">Clear</button>
+          <button onClick={()=>{setSystemId('');setFileTypeId('');setStatus('')}} className="px-4 py-1.5 text-sm font-mono uppercase tracking-widest text-ink-dim hover:text-gray-900 dark:hover:text-white transition-colors">Clear</button>
         </div>
       )}
 
-      <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 overflow-hidden">
+      <div className="bg-surface-card border border-surface-card-2 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20">
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">File Name</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">System</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Version</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Last Updated</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest">Uploaded By</th>
-                <th className="px-6 py-3 text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest text-right">Actions</th>
+              <tr className="border-b border-surface-card-2 bg-surface-card-2">
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">File Name</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">System</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">Version</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">Last Updated</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest">Uploaded By</th>
+                <th className="px-6 py-3 text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+            <tbody className="divide-y divide-surface-card-2">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-sm font-mono text-gray-500">Loading files...</td>
+                  <td colSpan={6} className="px-6 py-8 text-center text-sm font-mono text-ink-dim">Loading files...</td>
                 </tr>
               ) : files?.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-sm font-mono text-gray-500">No files found.</td>
+                  <td colSpan={6} className="px-6 py-8 text-center text-sm font-mono text-ink-dim">No files found.</td>
                 </tr>
               ) : (
                 files?.map((file) => (
-                  <tr key={file.id} className="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors group">
+                  <tr key={file.id} className="hover:bg-surface-card-2 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <FileCode className="h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                        <FileCode className="h-4 w-4 text-ink-dim group-hover:text-blue-500 transition-colors" />
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100">{file.file_name}</p>
-                          <p className="text-xs font-mono text-gray-500 mt-0.5">{file.file_types?.name?.toUpperCase() || 'UNKNOWN'}</p>
+                          <p className="font-medium text-ink-near-white">{file.file_name}</p>
+                          <p className="text-xs font-mono text-ink-dim mt-0.5">{file.file_types?.name?.toUpperCase() || 'UNKNOWN'}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm text-gray-900 dark:text-gray-300">{file.systems?.name || '-'}</p>
+                      <p className="text-sm text-gray-900 text-ink-near-white">{file.systems?.name || '-'}</p>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2 py-0.5 border border-gray-300 dark:border-gray-700 text-xs font-mono text-gray-700 dark:text-gray-300 bg-transparent">
+                      <span className="inline-flex items-center px-2 py-0.5 border border-gray-300 border-surface-card-2 text-xs font-mono text-gray-700 text-ink-near-white bg-transparent">
                         v{file.latest_version}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm font-mono text-gray-500">
+                    <td className="px-6 py-4 text-sm font-mono text-ink-dim">
                       {new Date(file.updated_at).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 text-sm font-mono text-gray-500">
+                    <td className="px-6 py-4 text-sm font-mono text-ink-dim">
                       {file.created_by_user?.full_name || '-'}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => handleDownload(file.id, file.file_name)}
-                          className="p-1.5 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
+                          className="p-1.5 text-ink-dim hover:text-blue-600 dark:text-ink-dim dark:hover:text-blue-400 transition-colors"
                           title="Download Latest"
                         >
                           <Download className="h-5 w-5" />
                         </button>
-                        <button onClick={() => setHistoryFile(file)} className="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors" title="Version History">
+                        <button onClick={() => setHistoryFile(file)} className="p-1.5 text-ink-dim hover:text-gray-900 dark:text-ink-dim dark:hover:text-white transition-colors" title="Version History">
                           <History className="h-5 w-5" />
                         </button>
                         {user?.role === 'Admin' && (
                           <button 
                             onClick={() => handleDelete(file.id)} 
-                            className="p-1.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors" 
+                            className="p-1.5 text-ink-dim hover:text-red-600 dark:text-ink-dim dark:hover:text-red-400 transition-colors" 
                             title="Delete File"
                           >
                             <Trash2 className="h-5 w-5" />
                           </button>
                         )}
-                        <button className="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors">
+                        <button className="p-1.5 text-ink-dim hover:text-gray-900 dark:text-ink-dim dark:hover:text-white transition-colors">
                           <MoreVertical className="h-5 w-5" />
                         </button>
                       </div>
@@ -279,17 +279,17 @@ const Repository: React.FC = () => {
       
       {isUploadModalOpen && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 w-full max-w-2xl">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20">
-              <h3 className="text-lg font-medium tracking-tight text-gray-900 dark:text-white">Upload Oracle Forms / Reports</h3>
+          <div className="bg-surface-card border border-surface-card-2 w-full max-w-2xl">
+            <div className="px-6 py-4 border-b border-surface-card-2 bg-surface-card-2">
+              <h3 className="text-lg font-medium tracking-tight text-ink-pure font-display">Upload Oracle Forms / Reports</h3>
             </div>
             
             <div className="p-6">
               <div className="space-y-6 mb-8">
                 <div>
-                  <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">Target System *</label>
+                  <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Target System *</label>
                   <select 
-                    className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-none dark:bg-[#0a0a0a] dark:text-white font-mono text-sm focus:outline-none focus:border-gray-500 transition-colors"
+                    className="w-full p-2 border border-gray-300 border-surface-card-2 rounded-none dark:bg-[#0a0a0a] dark:text-white font-mono text-sm focus:outline-none focus:border-gray-500 transition-colors"
                     value={selectedSystemId}
                     onChange={(e) => setSelectedSystemId(e.target.value)}
                   >
@@ -301,9 +301,9 @@ const Repository: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-2">Remark (Version Note)</label>
+                  <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Remark (Version Note)</label>
                   <textarea 
-                    className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-none dark:bg-[#0a0a0a] dark:text-white font-mono text-sm focus:outline-none focus:border-gray-500 transition-colors"
+                    className="w-full p-3 border border-gray-300 border-surface-card-2 rounded-none dark:bg-[#0a0a0a] dark:text-white font-mono text-sm focus:outline-none focus:border-gray-500 transition-colors"
                     value={remark}
                     onChange={(e) => setRemark(e.target.value)}
                     placeholder="Describe changes in this version..."
@@ -313,12 +313,12 @@ const Repository: React.FC = () => {
               </div>
 
               <div 
-                className="border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors group"
+                className="border border-dashed border-gray-300 border-surface-card-2 p-12 text-center cursor-pointer hover:bg-surface-card-2 transition-colors group"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="h-8 w-8 text-gray-400 group-hover:text-gray-600 dark:text-gray-500 dark:group-hover:text-gray-300 mx-auto mb-4 transition-colors" />
-                <p className="text-gray-900 dark:text-white font-medium text-sm">Click to browse files</p>
-                <p className="text-xs font-mono text-gray-500 mt-2">Only allowed file types can be uploaded</p>
+                <Upload className="h-8 w-8 text-ink-dim group-hover:text-ink-dim dark:text-ink-dim dark:group-hover:text-gray-300 mx-auto mb-4 transition-colors" />
+                <p className="text-ink-pure font-display font-medium text-sm">Click to browse files</p>
+                <p className="text-xs font-mono text-ink-dim mt-2">Only allowed file types can be uploaded</p>
                 <input 
                   type="file" 
                   multiple 
@@ -329,14 +329,14 @@ const Repository: React.FC = () => {
               </div>
               
               {selectedFiles.length > 0 && (
-                <div className="mt-6 p-4 border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/20">
-                  <p className="text-xs font-mono font-semibold text-gray-500 uppercase tracking-widest mb-3">Selected Files ({selectedFiles.length})</p>
-                  <ul className="text-sm font-mono text-gray-600 dark:text-gray-400 space-y-2 max-h-48 overflow-y-auto pr-2">
+                <div className="mt-6 p-4 border border-surface-card-2 bg-gray-50 dark:bg-gray-900/20">
+                  <p className="text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-3">Selected Files ({selectedFiles.length})</p>
+                  <ul className="text-sm font-mono text-ink-dim dark:text-ink-dim space-y-2 max-h-48 overflow-y-auto pr-2">
                     {selectedFiles.map((f, idx) => (
                       <li key={idx} className="flex items-center gap-3">
-                        <FileCode className="h-4 w-4 text-gray-400 flex-shrink-0" /> 
-                        <span className="text-gray-900 dark:text-gray-100 truncate">{f.name}</span>
-                        <span className="text-gray-400 flex-shrink-0">({(f.size / 1024).toFixed(1)} KB)</span>
+                        <FileCode className="h-4 w-4 text-ink-dim flex-shrink-0" /> 
+                        <span className="text-ink-near-white truncate">{f.name}</span>
+                        <span className="text-ink-dim flex-shrink-0">({(f.size / 1024).toFixed(1)} KB)</span>
                       </li>
                     ))}
                   </ul>
@@ -344,10 +344,10 @@ const Repository: React.FC = () => {
               )}
             </div>
 
-            <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-800 flex justify-end gap-3 bg-gray-50/50 dark:bg-gray-900/20">
+            <div className="px-6 py-4 border-t border-surface-card-2 flex justify-end gap-3 bg-surface-card-2">
               <button 
                 onClick={() => setIsUploadModalOpen(false)}
-                className="px-6 py-2 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 transition-colors"
+                className="px-6 py-2 border border-gray-300 border-surface-card-2 text-sm font-medium text-gray-700 text-ink-near-white hover:bg-white dark:hover:bg-gray-800 transition-colors"
                 disabled={isUploading}
               >
                 Cancel
