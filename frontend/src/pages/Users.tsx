@@ -50,6 +50,10 @@ export default function Users() {
         setError('Please complete all required fields.');
         return;
       }
+      if (password && password.length < 6) {
+        setError('Password must be at least 6 characters.');
+        return;
+      }
       if (edit?.id) {
         await api.put(`/users/${edit.id}`, { full_name: fullName, role_id: Number(roleId), is_active: active, ...(password ? { password } : {}) });
       } else {
