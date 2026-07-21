@@ -164,13 +164,15 @@ const Repository: React.FC = () => {
           <button onClick={() => setFiltersOpen(!filtersOpen)} className="p-1.5 border border-gray-300 dark:border-gray-700 rounded-none text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
             <Filter className="h-4 w-4" />
           </button>
-          <button 
-            onClick={() => setIsUploadModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-1.5 bg-gray-900 hover:bg-black text-white dark:bg-gray-100 dark:hover:bg-white dark:text-gray-900 rounded-none text-sm font-medium transition-colors"
-          >
-            <Upload className="h-4 w-4" />
-            <span>Upload</span>
-          </button>
+          {user?.role !== 'Viewer' && (
+            <button 
+              onClick={() => setIsUploadModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-1.5 bg-gray-900 hover:bg-black text-white dark:bg-gray-100 dark:hover:bg-white dark:text-gray-900 rounded-none text-sm font-medium transition-colors"
+            >
+              <Upload className="h-4 w-4" />
+              <span>Upload</span>
+            </button>
+          )}
         </div>
       </div>
       

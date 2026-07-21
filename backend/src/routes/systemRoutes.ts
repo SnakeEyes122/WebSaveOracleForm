@@ -12,7 +12,7 @@ router.use(authenticate);
 router.get('/', getSystems);
 
 // Admin and Developer can create systems, but only Admin can edit/delete
-router.post('/', requireRole(['Admin', 'Developer']), validateRequest(systemSchema), createSystem);
+router.post('/', requireRole(['Admin']), validateRequest(systemSchema), createSystem);
 router.put('/:id', requireRole(['Admin']), validateRequest(systemSchema), updateSystem);
 router.delete('/:id', requireRole(['Admin']), deleteSystem);
 

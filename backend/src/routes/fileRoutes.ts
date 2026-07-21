@@ -15,7 +15,7 @@ const upload = multer({
 router.use(authenticate);
 
 // Admin and Developer can upload
-router.post('/upload', requireRole(['Admin', 'Developer']), upload.array('files'), uploadFiles);
+router.post('/upload', requireRole(['Admin', 'User']), upload.array('files'), uploadFiles);
 
 // Anyone authenticated can list files and download
 router.get('/', getFiles);

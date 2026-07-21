@@ -9,10 +9,10 @@ const Sidebar: React.FC = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   
   const navItems = [
-    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['Admin', 'Developer', 'Viewer'] },
-    { to: '/repository', icon: FileArchive, label: 'File Repository', roles: ['Admin', 'Developer', 'Viewer'] },
-    { to: '/systems', icon: FolderTree, label: 'Systems', roles: ['Admin', 'Developer'] },
-    { to: '/file-types', icon: FileSpreadsheet, label: 'File Types', roles: ['Admin', 'Developer'] },
+    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['Admin', 'User', 'Viewer'] },
+    { to: '/repository', icon: FileArchive, label: 'File Repository', roles: ['Admin', 'User', 'Viewer'] },
+    { to: '/systems', icon: FolderTree, label: 'Systems', roles: ['Admin'] },
+    { to: '/file-types', icon: FileSpreadsheet, label: 'File Types', roles: ['Admin'] },
     { to: '/users', icon: Users, label: 'User Management', roles: ['Admin'] },
     { to: '/audit-logs', icon: Activity, label: 'Audit Logs', roles: ['Admin'] },
   ];

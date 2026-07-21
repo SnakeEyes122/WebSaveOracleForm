@@ -12,7 +12,7 @@ router.use(authenticate);
 router.get('/', getFileTypes);
 
 // Admin and Developer can create file types, but only Admin can edit/delete
-router.post('/', requireRole(['Admin', 'Developer']), validateRequest(fileTypeSchema), createFileType);
+router.post('/', requireRole(['Admin']), validateRequest(fileTypeSchema), createFileType);
 router.put('/:id', requireRole(['Admin']), validateRequest(fileTypeSchema), updateFileType);
 router.delete('/:id', requireRole(['Admin']), deleteFileType);
 
