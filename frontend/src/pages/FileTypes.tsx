@@ -120,11 +120,11 @@ export default function FileTypes() {
                 data.map((type) => (
                   <tr key={type.id} className="hover:bg-surface-card-2 transition-colors group">
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs text-ink-near-white border border-gray-300 border-surface-card-2 px-2 py-0.5 uppercase">
+                      <span className="font-mono text-xs text-ink-near-white border border-surface-card-2 px-2 py-0.5 uppercase">
                         {type.name}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-ink-dim dark:text-ink-dim">
+                    <td className="px-6 py-4 text-sm text-ink-dim">
                       {type.description || '-'}
                     </td>
                     <td className="px-6 py-4 text-sm font-mono text-ink-dim">
@@ -164,7 +164,7 @@ export default function FileTypes() {
             <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">File Extension *</label>
             <input 
               type="text" 
-              className="w-full p-2 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors"
+              className="w-full p-2 border border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors"
               placeholder="e.g. fmx, pdf" 
               value={name} 
               onChange={e => setName(e.target.value)}
@@ -173,14 +173,14 @@ export default function FileTypes() {
           <div>
             <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Description</label>
             <textarea 
-              className="w-full p-3 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors h-24"
+              className="w-full p-3 border border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors h-24"
               placeholder="e.g. Oracle Forms Executable" 
               value={description} 
               onChange={e => setDescription(e.target.value)}
             />
           </div>
           <div className="pt-6 flex justify-end gap-3 border-t border-surface-card-2 -mx-6 px-6 pb-2">
-            <button onClick={close} className="px-6 py-2 border border-gray-300 border-surface-card-2 text-sm font-medium text-gray-700 text-ink-near-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-none transition-colors">
+            <button onClick={close} className="px-6 py-2 border border-surface-card-2 text-sm font-medium text-ink-near-white hover:bg-surface-card-2 rounded-none transition-colors">
               Cancel
             </button>
             <button onClick={save} disabled={!name.trim()} className="px-6 py-2 bg-gray-900 hover:bg-black dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 disabled:opacity-50 text-sm font-medium rounded-none transition-colors">

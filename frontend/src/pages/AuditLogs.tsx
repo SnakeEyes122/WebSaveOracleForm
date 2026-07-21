@@ -67,22 +67,22 @@ export default function AuditLogs() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-medium text-sm text-gray-900 text-ink-near-white">
+                      <span className="font-medium text-sm text-ink-near-white">
                         {l.users?.full_name || l.users?.username || '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs px-2 py-0.5 border border-gray-300 border-surface-card-2 bg-gray-50 dark:bg-gray-800 text-ink-near-white uppercase whitespace-nowrap">
+                      <span className="font-mono text-xs px-2 py-0.5 border border-surface-card-2 bg-surface-card-2 text-ink-near-white uppercase whitespace-nowrap">
                         {l.action}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs text-ink-dim dark:text-ink-dim uppercase">
+                      <span className="font-mono text-xs text-ink-dim uppercase">
                         {l.entity_type || '-'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-mono text-xs text-ink-dim dark:text-ink-dim max-w-md truncate" title={l.details ? JSON.stringify(l.details) : ''}>
+                      <div className="font-mono text-xs text-ink-dim max-w-md truncate" title={l.details ? JSON.stringify(l.details) : ''}>
                         {l.details ? JSON.stringify(l.details) : '-'}
                       </div>
                     </td>
@@ -94,11 +94,11 @@ export default function AuditLogs() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center px-4 py-2 bg-gray-50 dark:bg-gray-900/20 border border-surface-card-2">
+      <div className="flex justify-between items-center px-4 py-2 bg-surface-card border border-surface-card-2">
         <button 
           disabled={page === 1} 
           onClick={() => setPage(page - 1)}
-          className="px-4 py-1.5 text-sm font-mono uppercase tracking-widest text-gray-700 text-ink-near-white hover:bg-gray-200 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-1.5 text-sm font-mono uppercase tracking-widest text-ink-near-white hover:bg-surface-card-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           Previous
         </button>
@@ -108,7 +108,7 @@ export default function AuditLogs() {
         <button 
           disabled={page === totalPages} 
           onClick={() => setPage(page + 1)}
-          className="px-4 py-1.5 text-sm font-mono uppercase tracking-widest text-gray-700 text-ink-near-white hover:bg-gray-200 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-1.5 text-sm font-mono uppercase tracking-widest text-ink-near-white hover:bg-surface-card-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           Next
         </button>

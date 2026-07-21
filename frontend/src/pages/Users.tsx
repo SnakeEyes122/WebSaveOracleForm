@@ -127,7 +127,7 @@ export default function Users() {
                         <p className="font-medium text-gray-900 text-ink-near-white">{u.full_name || '-'}</p>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="font-mono text-xs text-ink-dim dark:text-ink-dim border border-gray-300 border-surface-card-2 px-2 py-0.5 uppercase">
+                        <span className="font-mono text-xs text-ink-dim border border-surface-card-2 px-2 py-0.5 uppercase">
                           {r?.name || '-'}
                         </span>
                       </td>
@@ -167,7 +167,7 @@ export default function Users() {
             <div>
               <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Username *</label>
               <input 
-                className="w-full p-2 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors" 
+                className="w-full p-2 border border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors" 
                 placeholder="Username" 
                 value={username} 
                 onChange={e => setUsername(e.target.value)} 
@@ -178,7 +178,7 @@ export default function Users() {
           <div>
             <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Full Name *</label>
             <input 
-              className="w-full p-2 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 transition-colors" 
+              className="w-full p-2 border border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 transition-colors" 
               placeholder="Full name" 
               value={fullName} 
               onChange={e => setFullName(e.target.value)} 
@@ -188,7 +188,7 @@ export default function Users() {
           <div>
             <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Role *</label>
             <select 
-              className="w-full p-2 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors" 
+              className="w-full p-2 border border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors" 
               value={roleId} 
               onChange={e => setRoleId(e.target.value)}
             >
@@ -200,7 +200,7 @@ export default function Users() {
           <div>
             <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">{edit?.id ? 'New Password (Optional)' : 'Password *'}</label>
             <input 
-              className="w-full p-2 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors" 
+              className="w-full p-2 border border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono transition-colors" 
               type="password" 
               placeholder={edit?.id ? 'Leave blank to keep unchanged' : 'Password'} 
               value={password} 
@@ -217,12 +217,12 @@ export default function Users() {
                 checked={active} 
                 onChange={e => setActive(e.target.checked)} 
               />
-              <label htmlFor="user-active" className="text-sm text-gray-700 text-ink-near-white font-medium">Active Account</label>
+              <label htmlFor="user-active" className="text-sm text-ink-near-white font-medium">Active Account</label>
             </div>
           )}
           
           <div className="pt-6 flex justify-end gap-3 border-t border-surface-card-2 -mx-6 px-6 pb-2">
-            <button onClick={close} className="px-6 py-2 border border-gray-300 border-surface-card-2 text-sm font-medium text-gray-700 text-ink-near-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-none transition-colors">
+            <button onClick={close} className="px-6 py-2 border border-surface-card-2 text-sm font-medium text-ink-near-white hover:bg-surface-card-2 rounded-none transition-colors">
               Cancel
             </button>
             <button onClick={save} className="px-6 py-2 bg-gray-900 hover:bg-black dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 text-sm font-medium rounded-none transition-colors">

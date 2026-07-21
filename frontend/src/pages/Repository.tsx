@@ -158,10 +158,10 @@ const Repository: React.FC = () => {
               placeholder="Search files..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-1.5 border border-gray-300 border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono placeholder-gray-400 transition-colors"
+              className="w-full pl-9 pr-4 py-1.5 border border-surface-card-2 rounded-none bg-surface-card text-sm text-ink-pure font-display focus:outline-none focus:border-gray-500 font-mono placeholder-gray-400 transition-colors"
             />
           </div>
-          <button onClick={() => setFiltersOpen(!filtersOpen)} className="p-1.5 border border-gray-300 border-surface-card-2 rounded-none text-ink-dim dark:text-ink-dim hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+          <button onClick={() => setFiltersOpen(!filtersOpen)} className="p-1.5 border border-surface-card-2 rounded-none text-ink-dim hover:bg-surface-card-2 transition-colors">
             <Filter className="h-4 w-4" />
           </button>
           {user?.role !== 'Viewer' && (
@@ -178,15 +178,15 @@ const Repository: React.FC = () => {
       
       {filtersOpen && (
         <div className="flex gap-4 p-4 border border-surface-card-2 bg-surface-card mb-8">
-          <select className="border border-gray-300 border-surface-card-2 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={systemId} onChange={e=>setSystemId(e.target.value)}>
+          <select className="border border-surface-card-2 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={systemId} onChange={e=>setSystemId(e.target.value)}>
             <option value="">All systems</option>
             {systems?.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
-          <select className="border border-gray-300 border-surface-card-2 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={fileTypeId} onChange={e=>setFileTypeId(e.target.value)}>
+          <select className="border border-surface-card-2 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={fileTypeId} onChange={e=>setFileTypeId(e.target.value)}>
             <option value="">All types</option>
             {fileTypes?.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
-          <select className="border border-gray-300 border-surface-card-2 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={status} onChange={e=>setStatus(e.target.value)}>
+          <select className="border border-surface-card-2 rounded-none bg-transparent dark:text-white text-sm py-1.5 px-3 font-mono focus:outline-none focus:border-gray-500" value={status} onChange={e=>setStatus(e.target.value)}>
             <option value="">All statuses</option>
             <option>Active</option>
             <option>Archived</option>
@@ -233,7 +233,7 @@ const Repository: React.FC = () => {
                       <p className="text-sm text-gray-900 text-ink-near-white">{file.systems?.name || '-'}</p>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2 py-0.5 border border-gray-300 border-surface-card-2 text-xs font-mono text-gray-700 text-ink-near-white bg-transparent">
+                      <span className="inline-flex items-center px-2 py-0.5 border border-surface-card-2 text-xs font-mono text-ink-near-white bg-transparent">
                         v{file.latest_version}
                       </span>
                     </td>
@@ -289,7 +289,7 @@ const Repository: React.FC = () => {
                 <div>
                   <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Target System *</label>
                   <select 
-                    className="w-full p-2 border border-gray-300 border-surface-card-2 rounded-none dark:bg-[#0a0a0a] dark:text-white font-mono text-sm focus:outline-none focus:border-gray-500 transition-colors"
+                    className="w-full p-2 border border-surface-card-2 rounded-none dark:bg-[#0a0a0a] dark:text-white font-mono text-sm focus:outline-none focus:border-gray-500 transition-colors"
                     value={selectedSystemId}
                     onChange={(e) => setSelectedSystemId(e.target.value)}
                   >
@@ -303,7 +303,7 @@ const Repository: React.FC = () => {
                 <div>
                   <label className="block text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-2">Remark (Version Note)</label>
                   <textarea 
-                    className="w-full p-3 border border-gray-300 border-surface-card-2 rounded-none dark:bg-[#0a0a0a] dark:text-white font-mono text-sm focus:outline-none focus:border-gray-500 transition-colors"
+                    className="w-full p-3 border border-surface-card-2 rounded-none dark:bg-[#0a0a0a] dark:text-white font-mono text-sm focus:outline-none focus:border-gray-500 transition-colors"
                     value={remark}
                     onChange={(e) => setRemark(e.target.value)}
                     placeholder="Describe changes in this version..."
@@ -313,10 +313,10 @@ const Repository: React.FC = () => {
               </div>
 
               <div 
-                className="border border-dashed border-gray-300 border-surface-card-2 p-12 text-center cursor-pointer hover:bg-surface-card-2 transition-colors group"
+                className="border border-dashed border-surface-card-2 p-12 text-center cursor-pointer hover:bg-surface-card-2 transition-colors group"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="h-8 w-8 text-ink-dim group-hover:text-ink-dim dark:text-ink-dim dark:group-hover:text-gray-300 mx-auto mb-4 transition-colors" />
+                <Upload className="h-8 w-8 text-ink-dim group-hover:text-ink-dim dark:group-hover:text-gray-300 mx-auto mb-4 transition-colors" />
                 <p className="text-ink-pure font-display font-medium text-sm">Click to browse files</p>
                 <p className="text-xs font-mono text-ink-dim mt-2">Only allowed file types can be uploaded</p>
                 <input 
@@ -331,7 +331,7 @@ const Repository: React.FC = () => {
               {selectedFiles.length > 0 && (
                 <div className="mt-6 p-4 border border-surface-card-2 bg-gray-50 dark:bg-gray-900/20">
                   <p className="text-xs font-mono font-semibold text-ink-dim uppercase tracking-widest mb-3">Selected Files ({selectedFiles.length})</p>
-                  <ul className="text-sm font-mono text-ink-dim dark:text-ink-dim space-y-2 max-h-48 overflow-y-auto pr-2">
+                  <ul className="text-sm font-mono text-ink-dim space-y-2 max-h-48 overflow-y-auto pr-2">
                     {selectedFiles.map((f, idx) => (
                       <li key={idx} className="flex items-center gap-3">
                         <FileCode className="h-4 w-4 text-ink-dim flex-shrink-0" /> 
@@ -347,7 +347,7 @@ const Repository: React.FC = () => {
             <div className="px-6 py-4 border-t border-surface-card-2 flex justify-end gap-3 bg-surface-card-2">
               <button 
                 onClick={() => setIsUploadModalOpen(false)}
-                className="px-6 py-2 border border-gray-300 border-surface-card-2 text-sm font-medium text-gray-700 text-ink-near-white hover:bg-white dark:hover:bg-gray-800 transition-colors"
+                className="px-6 py-2 border border-surface-card-2 text-sm font-medium text-ink-near-white hover:bg-white dark:hover:bg-gray-800 transition-colors"
                 disabled={isUploading}
               >
                 Cancel
