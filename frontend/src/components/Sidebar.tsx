@@ -23,7 +23,7 @@ const Sidebar: React.FC = () => {
     <div className="w-64 bg-canvas border-r border-surface-card-2 flex flex-col h-screen fixed z-20">
       <div className="h-16 flex items-center px-6 border-b border-surface-card-2">
         <DatabaseIcon />
-        <span className="ml-3 font-display font-semibold text-sm tracking-widest uppercase text-ink-near-white">Forms Repo</span>
+        <span className="ml-3 font-display font-semibold text-sm tracking-widest uppercase text-ink-near-white">Files Repo</span>
       </div>
       
       <div className="flex-1 py-4 overflow-y-auto">
