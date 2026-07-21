@@ -29,3 +29,7 @@ coverage/
 
 # Local agent tooling
 .agents/
+
+# Project Specific
+docs/
+setup_project.ps1
