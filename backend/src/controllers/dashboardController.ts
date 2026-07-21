@@ -44,6 +44,63 @@ export const getDashboardStats = async (req: Request, res: Response) => {
 
     const mostDownloaded = Object.values(downloadCounts).sort((a, b) => b.count - a.count).slice(0, 5);
 
+    // Storage by System
+    const { data: storageData } = await supabase
+      .from('file_versions')
+      .select('file_size, files(systems(name))');
+      
+    const storageBySystem: Record<string, number> = {};
+    if (storageData) {
+      storageData.forEach((item: any) => {
+        const sysName = item.files?.systems?.name || 'Unknown';
+        const size = Number(item.file_size) || 0;
+        storageBySystem[sysName] = (storageBySystem[sysName] || 0) + size;
+      });
+    }
+    const storageBySystemArray = Object.keys(storageBySystem).map(name => ({
+      name,
+      size: storageBySystem[name]
+    }));
+
+    // Activity Trend (Last 7 Days)
+    const trend: Record<string, { date: string, uploads: number, downloads: number }> = {};
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      trend[dateStr] = { date: dateStr, uploads: 0, downloads: 0 };
+    }
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const { data: recentUploads } = await supabase
+      .from('file_versions')
+      .select('upload_date')
+      .gte('upload_date', sevenDaysAgo.toISOString());
+      
+    if (recentUploads) {
+      recentUploads.forEach((u: any) => {
+        const dateStr = new Date(u.upload_date).toISOString().split('T')[0];
+        if (trend[dateStr]) trend[dateStr].uploads += 1;
+      });
+    }
+
+    const { data: recentDownloads } = await supabase
+      .from('download_history')
+      .select('download_date')
+      .gte('download_date', sevenDaysAgo.toISOString());
+
+    if (recentDownloads) {
+      recentDownloads.forEach((d: any) => {
+        const dateStr = new Date(d.download_date).toISOString().split('T')[0];
+        if (trend[dateStr]) trend[dateStr].downloads += 1;
+      });
+    }
+    
+    const activityTrend = Object.values(trend);
+
     res.status(200).json({
       totalFiles: totalFiles || 0,
       extensions: {
@@ -53,7 +110,9 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       },
       storageUsedBytes: storageUsed,
       latestUploads: latestUpload,
-      mostDownloaded
+      mostDownloaded,
+      storageBySystem: storageBySystemArray,
+      activityTrend
     });
 
   } catch (error: any) {
