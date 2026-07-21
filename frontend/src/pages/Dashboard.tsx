@@ -1,7 +1,10 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Database, FileCode, HardDrive, DownloadCloud, Activity } from 'lucide-react';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import api from '../api/axios';
+
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 const Dashboard: React.FC = () => {
   const { data: stats, isLoading } = useQuery({
@@ -59,6 +62,60 @@ const Dashboard: React.FC = () => {
             <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
             Online
           </h3>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        {/* Storage by System */}
+        <div className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0a0a0a]">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20">
+            <h3 className="text-sm font-semibold tracking-wide text-gray-900 dark:text-white uppercase">Storage by System</h3>
+          </div>
+          <div className="p-6 h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={stats?.storageBySystem || []}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="size"
+                  nameKey="name"
+                >
+                  {(stats?.storageBySystem || []).map((_: any, index: number) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value: any) => formatBytes(Number(value))} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Activity Trend */}
+        <div className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0a0a0a]">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20">
+            <h3 className="text-sm font-semibold tracking-wide text-gray-900 dark:text-white uppercase">Activity Trend (Last 7 Days)</h3>
+          </div>
+          <div className="p-6 h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats?.activityTrend || []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                <XAxis dataKey="date" stroke="#666" fontSize={12} tickFormatter={(val) => val.split('-').slice(1).join('/')} />
+                <YAxis stroke="#666" fontSize={12} allowDecimals={false} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0a0a0a', borderColor: '#333' }}
+                  itemStyle={{ color: '#fff' }}
+                />
+                <Legend />
+                <Bar dataKey="uploads" name="Uploads" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="downloads" name="Downloads" fill="#10b981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
